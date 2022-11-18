@@ -1,0 +1,113 @@
+[
+  {
+    "name": "spot"
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "X",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "Y",
+      "value": 0.49
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "Z",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "A",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "B",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "C",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "front_left_hip_x",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "front_left_hip_y",
+      "value": 0.8
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "front_left_knee",
+      "value": -1.77
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "front_right_hip_x",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "front_right_hip_y",
+      "value": 0.8
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "front_right_knee",
+      "value": -1.77
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "rear_left_hip_x",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "rear_left_hip_y",
+      "value": 0.8
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "rear_left_knee",
+      "value": -1.7
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "rear_right_hip_x",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "rear_right_hip_y",
+      "value": 0.8
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "rear_right_knee",
+      "value": -1.7
+    }
+  }
+]

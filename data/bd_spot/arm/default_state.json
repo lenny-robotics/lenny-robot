@@ -1,0 +1,77 @@
+[
+  {
+    "name": "spotArm"
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "X",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "Y",
+      "value": 0.56
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "Z",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "A",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "B",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "C",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "joint1",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "joint2",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "joint3",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "joint4",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "joint5",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "joint6",
+      "value": 0.0
+    }
+  }
+]

@@ -1,0 +1,178 @@
+[
+  {
+    "parent-description": "panda_link0",
+    "position": {
+      "cols": 1,
+      "data": [
+        -0.041270662099123,
+        0.0700000524520874,
+        1.1589378118521954e-05
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1548628868061939
+  },
+  {
+    "endPosition": {
+      "cols": 1,
+      "data": [
+        -6.7409127950668335e-06,
+        -0.1393173848737296,
+        0.03718881495296958
+      ],
+      "rows": 3
+    },
+    "parent-description": "panda_link1",
+    "primitive-description": "Capsule",
+    "radius": 0.10199696873991371,
+    "startPosition": {
+      "cols": 1,
+      "data": [
+        -6.7409127950668335e-06,
+        0.00031977788100806537,
+        0.03718881495296958
+      ],
+      "rows": 3
+    }
+  },
+  {
+    "endPosition": {
+      "cols": 1,
+      "data": [
+        -1.3440847396850586e-05,
+        -0.001342007639234033,
+        -0.036195459008216815
+      ],
+      "rows": 3
+    },
+    "parent-description": "panda_link2",
+    "primitive-description": "Capsule",
+    "radius": 0.1019957109468907,
+    "startPosition": {
+      "cols": 1,
+      "data": [
+        -1.3440847396850586e-05,
+        0.14031824630719886,
+        -0.036195459008216815
+      ],
+      "rows": 3
+    }
+  },
+  {
+    "parent-description": "panda_link3",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.04124237224459648,
+        -0.03599915111064911,
+        -0.027025619685649857
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.14687736429014853
+  },
+  {
+    "parent-description": "panda_link4",
+    "position": {
+      "cols": 1,
+      "data": [
+        -0.041255856691555445,
+        0.03150030858450929,
+        0.028031839057803154
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.14768892357167704
+  },
+  {
+    "endPosition": {
+      "cols": 1,
+      "data": [
+        -8.604089300784379e-06,
+        -0.20920772267762905,
+        -0.037469837814569446
+      ],
+      "rows": 3
+    },
+    "parent-description": "panda_link5",
+    "primitive-description": "Capsule",
+    "radius": 0.10220598804244677,
+    "startPosition": {
+      "cols": 1,
+      "data": [
+        -7.315866532239118e-06,
+        -0.005593919860560885,
+        -0.037469837814569446
+      ],
+      "rows": 3
+    }
+  },
+  {
+    "parent-description": "panda_link6",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.0380585218816995,
+        0.015231551602482685,
+        0.01402692326903343
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.11882766715326176
+  },
+  {
+    "parent-description": "panda_link6",
+    "position": {
+      "cols": 1,
+      "data": [
+        -0.004000000000000059,
+        -1.1102230246251565e-16,
+        0.0015000000000000007
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.06767208157726484
+  },
+  {
+    "parent-description": "panda_link7",
+    "position": {
+      "cols": 1,
+      "data": [
+        -0.003982509762048614,
+        -0.07740001492202275,
+        0.03112995581328869
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.08338989255496829
+  },
+  {
+    "endPosition": {
+      "cols": 1,
+      "data": [
+        -0.00399719858169556,
+        -0.15,
+        -0.05
+      ],
+      "rows": 3
+    },
+    "parent-description": "panda_link7",
+    "primitive-description": "Capsule",
+    "radius": 0.07,
+    "startPosition": {
+      "cols": 1,
+      "data": [
+        -0.00399719858169556,
+        -0.15,
+        0.07
+      ],
+      "rows": 3
+    }
+  }
+]

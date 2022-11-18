@@ -1,0 +1,133 @@
+<robot name="spotArm">
+    <link name="base" >
+      <visual>
+        <origin xyz="0.0 0.118 0.0" rpy="1.57079 0.0 0.0" />
+        <geometry>
+          <mesh filename="/meshes/Base.obj" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="Black">
+          <color rgba="0.26274 0.26274 0.26274 1.0"/>
+        </material>
+      </visual>
+    </link>
+
+    <link name="link1" >
+      <visual>
+        <origin xyz="0.0 0.066 0.0" rpy="1.57079 0.0 0.0" />
+        <geometry>
+          <mesh filename="/meshes/Link1.obj" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="Black">
+          <color rgba="0.26274 0.26274 0.26274 1.0"/>
+        </material>
+      </visual>
+    </link>
+
+    <joint type="revolute" name="joint1">
+      <origin xyz="0 0 0.052" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <parent link="base"/>
+      <child link="link1"/>
+      <limit lower="-2.87979" upper="2.87979" velocity="10.0"/>
+    </joint>
+
+    <link name="link2" >
+      <visual>
+        <origin xyz="0.0 0.0 0.0" rpy="1.57079 0.0 0.0" />
+        <geometry>
+          <mesh filename="/meshes/Link2.obj" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="Yellow">
+          <color rgba="0.91372 0.64705 0.0 1.0"/>
+        </material>
+      </visual>
+    </link>
+
+    <joint type="revolute" name="joint2">
+      <origin xyz="0 0 0.066" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <parent link="link1"/>
+      <child link="link2"/>
+      <limit lower="0.0" upper="3.66519" velocity="10.0"/>
+    </joint>
+
+    <link name="link3" >
+      <visual>
+        <origin xyz="0.3385 0.0 0.0" rpy="1.57079 0.0 0.0" />
+        <geometry>
+          <mesh filename="/meshes/Link3.obj" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="Black">
+          <color rgba="0.26274 0.26274 0.26274 1.0"/>
+        </material>
+      </visual>
+    </link>
+
+    <joint type="revolute" name="joint3">
+      <origin xyz="-0.3385 0 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <parent link="link2"/>
+      <child link="link3"/>
+      <limit lower="-3.14159" upper="0.0" velocity="10.0"/>
+    </joint>
+
+    <link name="link4" >
+      <visual>
+        <origin xyz="0.2 -0.075 0.0" rpy="1.57079 0.0 0.0" />
+        <geometry>
+          <mesh filename="/meshes/Link4.obj" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="Yellow">
+          <color rgba="0.91372 0.64705 0.0 1.0"/>
+        </material>
+      </visual>
+    </link>
+
+    <joint type="revolute" name="joint4">
+      <origin xyz="0.13925 0 0.075" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+      <parent link="link3"/>
+      <child link="link4"/>
+      <limit lower="-2.79252" upper="2.79252" velocity="10.0"/>
+    </joint>
+
+    <link name="link5" >
+      <visual>
+        <origin xyz="-0.064 -0.026 0.0" rpy="1.57079 0.0 0.0" />
+        <geometry>
+          <mesh filename="/meshes/Link5.obj" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="Black">
+          <color rgba="0.26274 0.26274 0.26274 1.0"/>
+        </material>
+      </visual>
+    </link>
+
+    <joint type="revolute" name="joint5">
+      <origin xyz="0.2641 0.0 -0.0488" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <parent link="link4"/>
+      <child link="link5"/>
+      <limit lower="-1.83259" upper="1.83259" velocity="10.0"/>
+    </joint>
+
+    <link name="link6" >
+      <visual>
+        <origin xyz="-0.119 -0.075 0.0" rpy="1.57079 0.0 0.0" />
+        <geometry>
+          <mesh filename="/meshes/Link6.obj" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="Black">
+          <color rgba="0.26274 0.26274 0.26274 1.0"/>
+        </material>
+      </visual>
+    </link>
+
+    <joint type="revolute" name="joint6">
+      <origin xyz="0.053 0.0 0.0488" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+      <parent link="link5"/>
+      <child link="link6"/>
+      <limit lower="-2.87979" upper="2.87979" velocity="10.0"/>
+    </joint>
+</robot>

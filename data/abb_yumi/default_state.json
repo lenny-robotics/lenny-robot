@@ -1,0 +1,125 @@
+[
+  {
+    "name": "yumi"
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "X",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "Y",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "Z",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "A",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "B",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "C",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_1_l",
+      "value": -0.8
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_1_r",
+      "value": 0.8
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_2_l",
+      "value": -1.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_2_r",
+      "value": -1.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_3_l",
+      "value": 0.15
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_3_r",
+      "value": 0.15
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_4_l",
+      "value": 0.12
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_4_r",
+      "value": 0.12
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_5_l",
+      "value": 0.45
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_5_r",
+      "value": 0.45
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_6_l",
+      "value": 0.6
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_6_r",
+      "value": 0.6
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_7_l",
+      "value": 1.5
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "yumi_joint_7_r",
+      "value": -1.5
+    }
+  }
+]

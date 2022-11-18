@@ -1,0 +1,164 @@
+[
+  {
+    "parent-description": "base_link",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.00019369274377822876,
+        0.08542499692793935,
+        -7.836706936357671e-05
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1
+  },
+  {
+    "parent-description": "bracelet_link",
+    "position": {
+      "cols": 1,
+      "data": [
+        -3.857809985872984e-07,
+        0.03346265043466618,
+        -0.018585226469127136
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.075
+  },
+  {
+    "endPosition": {
+      "cols": 1,
+      "data": [
+        7.095310805560473e-08,
+        0.1,
+        0.013648074044639897
+      ],
+      "rows": 3
+    },
+    "parent-description": "bracelet_link",
+    "primitive-description": "Capsule",
+    "radius": 0.05,
+    "startPosition": {
+      "cols": 1,
+      "data": [
+        1.1242619540885457e-07,
+        0.22,
+        0.013649472528744662
+      ],
+      "rows": 3
+    }
+  },
+  {
+    "endPosition": {
+      "cols": 1,
+      "data": [
+        7.095310805560473e-08,
+        0.0,
+        0.013648074044639897
+      ],
+      "rows": 3
+    },
+    "parent-description": "forearm_link",
+    "primitive-description": "Capsule",
+    "radius": 0.06,
+    "startPosition": {
+      "cols": 1,
+      "data": [
+        1.1242619540885457e-07,
+        0.17,
+        0.013649472528744662
+      ],
+      "rows": 3
+    }
+  },
+  {
+    "endPosition": {
+      "cols": 1,
+      "data": [
+        -3.547009928919209e-19,
+        -0.012938789613747448,
+        0.007877912982814927
+      ],
+      "rows": 3
+    },
+    "parent-description": "half_arm_1_link",
+    "primitive-description": "Capsule",
+    "radius": 0.065,
+    "startPosition": {
+      "cols": 1,
+      "data": [
+        -3.547009928919209e-19,
+        0.19173900989533094,
+        0.007877912982814927
+      ],
+      "rows": 3
+    }
+  },
+  {
+    "endPosition": {
+      "cols": 1,
+      "data": [
+        -5.960370328853773e-17,
+        0.03543615102101777,
+        -0.0015012320455767454
+      ],
+      "rows": 3
+    },
+    "parent-description": "half_arm_2_link",
+    "primitive-description": "Capsule",
+    "radius": 0.06281680445281985,
+    "startPosition": {
+      "cols": 1,
+      "data": [
+        -5.960370328853773e-17,
+        0.22331363425056844,
+        -0.0015012320455767454
+      ],
+      "rows": 3
+    }
+  },
+  {
+    "parent-description": "shoulder_link",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.0,
+        0.07,
+        -0.0012966410392559954
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.09
+  },
+  {
+    "parent-description": "spherical_wrist_1_link",
+    "position": {
+      "cols": 1,
+      "data": [
+        7.395664577414252e-07,
+        0.05,
+        -0.009022700148483642
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.06
+  },
+  {
+    "parent-description": "spherical_wrist_2_link",
+    "position": {
+      "cols": 1,
+      "data": [
+        -2.7133249633215506e-08,
+        0.03,
+        0.0
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.075
+  }
+]

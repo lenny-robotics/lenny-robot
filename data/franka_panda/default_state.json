@@ -1,0 +1,83 @@
+[
+  {
+    "name": "panda"
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "X",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "Y",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "Z",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "A",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "B",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "C",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "panda_joint1",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "panda_joint2",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "panda_joint3",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "panda_joint4",
+      "value": -1.57079
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "panda_joint5",
+      "value": 0.0
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "panda_joint6",
+      "value": 1.57079
+    }
+  },
+  {
+    "lenny::robot::Dof": {
+      "name": "panda_joint7",
+      "value": 0.0
+    }
+  }
+]

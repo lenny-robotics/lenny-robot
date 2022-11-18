@@ -1,0 +1,257 @@
+[
+  {
+    "center": {
+      "cols": 1,
+      "data": [
+        -0.13999999999999999,
+        0.38,
+        0.0
+      ],
+      "rows": 3
+    },
+    "dimensions": {
+      "cols": 1,
+      "data": [
+        0.45,
+        0.18,
+        0.3
+      ],
+      "rows": 3
+    },
+    "orientation": {
+      "w": 1.0,
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "parent-description": "yumi_body",
+    "primitive-description": "Box",
+    "safetyMargin": 0.01
+  },
+  {
+    "center": {
+      "cols": 1,
+      "data": [
+        -0.245,
+        0.2,
+        0.0
+      ],
+      "rows": 3
+    },
+    "dimensions": {
+      "cols": 1,
+      "data": [
+        0.25,
+        0.2,
+        0.25
+      ],
+      "rows": 3
+    },
+    "orientation": {
+      "w": 1.0,
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "parent-description": "yumi_body",
+    "primitive-description": "Box",
+    "safetyMargin": 0.01
+  },
+  {
+    "center": {
+      "cols": 1,
+      "data": [
+        -0.10999999999999999,
+        0.0,
+        0.0
+      ],
+      "rows": 3
+    },
+    "dimensions": {
+      "cols": 1,
+      "data": [
+        0.5,
+        0.22,
+        0.42
+      ],
+      "rows": 3
+    },
+    "orientation": {
+      "w": 1.0,
+      "x": 0.0,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "parent-description": "yumi_body",
+    "primitive-description": "Box",
+    "safetyMargin": 0.01
+  },
+  {
+    "parent-description": "yumi_link_1_l",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.03726611517580478,
+        0.012337585241364309,
+        -0.03948785786735415
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1
+  },
+  {
+    "parent-description": "yumi_link_1_r",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.03526461369354997,
+        0.04127528897685445,
+        0.012649168441747098
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1
+  },
+  {
+    "parent-description": "yumi_link_2_l",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.060483856681108276,
+        0.03244407981830563,
+        -0.005970943433575349
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1
+  },
+  {
+    "parent-description": "yumi_link_2_r",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.06268479443889308,
+        0.013206744327408905,
+        0.026145177006883458
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1
+  },
+  {
+    "parent-description": "yumi_link_3_l",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.04609181412695974,
+        -0.004496275618725442,
+        -0.014424484981339261
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1
+  },
+  {
+    "parent-description": "yumi_link_3_r",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.042740297523049434,
+        0.020322117388597266,
+        -0.013834879513390918
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1
+  },
+  {
+    "parent-description": "yumi_link_4_l",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.04617031362377144,
+        -0.0172636793475262,
+        0.038948769913020306
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1
+  },
+  {
+    "parent-description": "yumi_link_4_r",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.05078270440169619,
+        -0.03567508459920108,
+        -0.021960508266736692
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1
+  },
+  {
+    "parent-description": "yumi_link_5_l",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.02091379516507042,
+        -0.04484556542808111,
+        0.016891056267759354
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1
+  },
+  {
+    "parent-description": "yumi_link_5_r",
+    "position": {
+      "cols": 1,
+      "data": [
+        0.01683561281705189,
+        -0.01369086138489486,
+        -0.047458165942031484
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1
+  },
+  {
+    "parent-description": "yumi_link_7_l",
+    "position": {
+      "cols": 1,
+      "data": [
+        -0.0016656723003398012,
+        0.004978390936789409,
+        0.0012865118667158679
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1
+  },
+  {
+    "parent-description": "yumi_link_7_r",
+    "position": {
+      "cols": 1,
+      "data": [
+        -0.0029784201679959516,
+        0.0007253012178922006,
+        -0.00038567097483752414
+      ],
+      "rows": 3
+    },
+    "primitive-description": "Sphere",
+    "radius": 0.1
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "PoseLimits": {
+      "dof": "X",
+      "lower": -0.1,
+      "upper": 0.1
+    }
+  },
+  {
+    "PoseLimits": {
+      "dof": "Y",
+      "lower": 0.4,
+      "upper": 0.65
+    }
+  },
+  {
+    "PoseLimits": {
+      "dof": "Z",
+      "lower": -0.1,
+      "upper": 0.1
+    }
+  },
+  {
+    "PoseLimits": {
+      "dof": "A",
+      "lower": -0.4,
+      "upper": 0.4
+    }
+  },
+  {
+    "PoseLimits": {
+      "dof": "B",
+      "lower": -0.4,
+      "upper": 0.4
+    }
+  },
+  {
+    "PoseLimits": {
+      "dof": "C",
+      "lower": -0.4,
+      "upper": 0.4
+    }
+  }
+]
