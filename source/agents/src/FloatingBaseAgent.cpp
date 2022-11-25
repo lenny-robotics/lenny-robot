@@ -10,6 +10,9 @@ FloatingBaseAgent::FloatingBaseAgent(const std::string& name, const FloatingBase
 
     //Setup collision primitives
     loadCollisionPrimitivesFromFile(std::string(FloatingBaseRobot::folderPath + "/collision_primitives.json").c_str());
+
+    //Setup self-collision link map
+    loadSelfCollisionLinkMapFromFile(std::string(FloatingBaseRobot::folderPath + "/self_collision_link_map.json").c_str());
 }
 
 FloatingBaseAgent::FloatingBaseAgent(const std::string& name, const FloatingBaseRobot& robot)

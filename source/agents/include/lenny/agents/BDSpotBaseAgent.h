@@ -25,7 +25,7 @@ public:
     void drawScene(const MotionTrajectory& trajectory, const double& currentTime, const bool& isRecedingHorizon) const override;
     void drawScene(const Eigen::VectorXd& agentState) const override;
 
-    virtual Eigen::Vector6d getSpotBasePoseFromAgentState(const Eigen::VectorXd& agentState) const = 0;
+    virtual Eigen::Vector6d getSpotBasePoseFromRobotState(const Eigen::VectorXd& robotState) const = 0;
 
 protected:
     void drawAdditionalGuiContent() override;
@@ -63,7 +63,7 @@ public:
                     const Eigen::VectorXd& initialFloatingRobotState);
     BDSpotBaseAgent(const std::string& name, const BDSpotFloatingRobot& floatingBaseRobot, const BDSpotBaseRobot& spotBaseRobot);
 
-    Eigen::Vector6d getSpotBasePoseFromAgentState(const Eigen::VectorXd& agentState) const override;
+    Eigen::Vector6d getSpotBasePoseFromRobotState(const Eigen::VectorXd& agentState) const override;
 };
 
 }  // namespace lenny::agents

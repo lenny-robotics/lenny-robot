@@ -63,6 +63,9 @@ ABBYuMiAgent::ABBYuMiAgent(const std::string& name, const ABBYuMiRobot& robot, c
 
     //Setup collision primitives
     loadCollisionPrimitivesFromFile(std::string(ABBYuMiRobot::folderPath + "/collision_primitives.json").c_str());
+
+    //Setup self-collision link map
+    loadSelfCollisionLinkMapFromFile(std::string(ABBYuMiRobot::folderPath + "/self_collision_link_map.json").c_str());
 }
 
 ABBYuMiAgent::ABBYuMiAgent(const std::string& name, const ABBYuMiRobot& robot)

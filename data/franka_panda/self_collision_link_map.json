@@ -1,0 +1,43 @@
+[
+  {
+    "link": "panda_link7",
+    "links": []
+  },
+  {
+    "link": "panda_link6",
+    "links": []
+  },
+  {
+    "link": "panda_link5",
+    "links": []
+  },
+  {
+    "link": "panda_link4",
+    "links": []
+  },
+  {
+    "link": "panda_link3",
+    "links": []
+  },
+  {
+    "link": "panda_link1",
+    "links": [
+      "panda_link6",
+      "panda_link7"
+    ]
+  },
+  {
+    "link": "panda_link2",
+    "links": [
+      "panda_link7"
+    ]
+  },
+  {
+    "link": "panda_link0",
+    "links": [
+      "panda_link5",
+      "panda_link6",
+      "panda_link7"
+    ]
+  }
+]

@@ -1,0 +1,121 @@
+[
+  {
+    "link": "yumi_link_7_r",
+    "links": [
+      "yumi_link_7_l"
+    ]
+  },
+  {
+    "link": "yumi_link_5_r",
+    "links": [
+      "yumi_link_5_l",
+      "yumi_link_6_l",
+      "yumi_link_7_l"
+    ]
+  },
+  {
+    "link": "yumi_link_5_l",
+    "links": [
+      "yumi_link_6_r",
+      "yumi_link_7_r"
+    ]
+  },
+  {
+    "link": "yumi_link_4_r",
+    "links": [
+      "yumi_link_4_l",
+      "yumi_link_5_l",
+      "yumi_link_6_l",
+      "yumi_link_7_l"
+    ]
+  },
+  {
+    "link": "yumi_link_3_r",
+    "links": [
+      "yumi_link_3_l",
+      "yumi_link_4_l",
+      "yumi_link_5_l",
+      "yumi_link_6_l",
+      "yumi_link_7_l"
+    ]
+  },
+  {
+    "link": "yumi_link_6_r",
+    "links": [
+      "yumi_link_6_l",
+      "yumi_link_7_l"
+    ]
+  },
+  {
+    "link": "yumi_link_6_l",
+    "links": [
+      "yumi_link_7_r"
+    ]
+  },
+  {
+    "link": "yumi_link_3_l",
+    "links": [
+      "yumi_link_4_r",
+      "yumi_link_5_r",
+      "yumi_link_6_r",
+      "yumi_link_7_r"
+    ]
+  },
+  {
+    "link": "yumi_link_2_r",
+    "links": [
+      "yumi_link_5_l",
+      "yumi_link_6_l",
+      "yumi_link_7_l"
+    ]
+  },
+  {
+    "link": "yumi_link_1_r",
+    "links": [
+      "yumi_link_6_l",
+      "yumi_link_6_r",
+      "yumi_link_7_l",
+      "yumi_link_7_r"
+    ]
+  },
+  {
+    "link": "yumi_link_7_l",
+    "links": []
+  },
+  {
+    "link": "yumi_link_4_l",
+    "links": [
+      "yumi_link_5_r",
+      "yumi_link_6_r",
+      "yumi_link_7_r"
+    ]
+  },
+  {
+    "link": "yumi_link_1_l",
+    "links": [
+      "yumi_link_6_l",
+      "yumi_link_6_r",
+      "yumi_link_7_l",
+      "yumi_link_7_r"
+    ]
+  },
+  {
+    "link": "yumi_link_2_l",
+    "links": [
+      "yumi_link_5_r",
+      "yumi_link_6_r",
+      "yumi_link_7_r"
+    ]
+  },
+  {
+    "link": "yumi_body",
+    "links": [
+      "yumi_link_5_l",
+      "yumi_link_5_r",
+      "yumi_link_6_l",
+      "yumi_link_6_r",
+      "yumi_link_7_l",
+      "yumi_link_7_r"
+    ]
+  }
+]

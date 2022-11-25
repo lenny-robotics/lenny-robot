@@ -100,9 +100,13 @@ public:
     void addCollisionBox(const std::string& linkName, const Eigen::Vector3d& localCenterPoint, const Eigen::QuaternionD& localOrientation,
                          const Eigen::Vector3d& localDimensions, const double& safetyMargin);
 
-    //--- Save and load
     bool saveCollisionPrimitivesToFile(const std::string& filePath) const;
     bool loadCollisionPrimitivesFromFile(const char* filePath);
+
+    //--- Self collision link map
+    void generateSelfCollisionLinkMap(const uint& ignoreConsecutiveLinksIndex);
+    bool saveSelfCollisionLinkMapToFile(const std::string& filePath) const;
+    bool loadSelfCollisionLinkMapFromFile(const char* filePath);
 
 protected:
     //--- Protected helpers
@@ -120,10 +124,9 @@ public:
     const std::string name;
     const robot::Robot& robot;
     std::vector<Gripper::UPtr> grippers;
-    std::vector<collision::Primitive::SPtr> collisionPrimitives;
-    uint ignoreConsecutiveLinksIndex = 1;
-    tools::Transformation localBaseTrafo = tools::Transformation();           //For base constraints
-    Eigen::QuaternionD nominalBaseRotation = Eigen::QuaternionD::Identity();  //For base pose constraints
+    std::unordered_map<std::string, std::vector<collision::Primitive::SPtr>> collisionPrimitives;  //[linkName, primitives]
+    std::unordered_map<std::string, std::vector<std::string>> selfCollisionLinkMap;                //[linkName, linkNames]
+    tools::Transformation localBaseTrafo = tools::Transformation();                                //For base constraints
 
     //--- Drawing
     double infoAlpha = 1.0;

@@ -1,0 +1,35 @@
+[
+  {
+    "link": "link6",
+    "links": []
+  },
+  {
+    "link": "link4",
+    "links": []
+  },
+  {
+    "link": "link3",
+    "links": []
+  },
+  {
+    "link": "link2",
+    "links": []
+  },
+  {
+    "link": "link5",
+    "links": []
+  },
+  {
+    "link": "link1",
+    "links": []
+  },
+  {
+    "link": "base",
+    "links": [
+      "link3",
+      "link4",
+      "link5",
+      "link6"
+    ]
+  }
+]

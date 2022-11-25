@@ -36,7 +36,7 @@ public:
     BDSpotArmAgent(const std::string& name, const BDSpotArmRobot& armRobot, const BDSpotBaseRobot& baseRobot, const Eigen::VectorXd& initialArmRobotState);
     BDSpotArmAgent(const std::string& name, const BDSpotArmRobot& armRobot, const BDSpotBaseRobot& baseRobot);
 
-    Eigen::Vector6d getSpotBasePoseFromAgentState(const Eigen::VectorXd& agentState) const override;
+    Eigen::Vector6d getSpotBasePoseFromRobotState(const Eigen::VectorXd& robotState) const override;
 };
 
 }  // namespace lenny::agents

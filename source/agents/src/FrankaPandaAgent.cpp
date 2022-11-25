@@ -51,6 +51,9 @@ FrankaPandaAgent::FrankaPandaAgent(const std::string& name, const FrankaPandaRob
 
     //Setup collision primitives
     loadCollisionPrimitivesFromFile(std::string(FrankaPandaRobot::folderPath + "/collision_primitives.json").c_str());
+
+    //Setup self-collision link map
+    loadSelfCollisionLinkMapFromFile(std::string(FrankaPandaRobot::folderPath + "/self_collision_link_map.json").c_str());
 }
 
 FrankaPandaAgent::FrankaPandaAgent(const std::string& name, const FrankaPandaRobot& robot)

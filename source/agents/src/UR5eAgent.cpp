@@ -21,6 +21,9 @@ UR5eAgent::UR5eAgent(const std::string& name, const UR5eRobot& robot, const Eige
 
     //Setup collision primitives
     loadCollisionPrimitivesFromFile(std::string(UR5eRobot::folderPath + "/collision_primitives.json").c_str());
+
+    //Setup self-collision link map
+    loadSelfCollisionLinkMapFromFile(std::string(UR5eRobot::folderPath + "/self_collision_link_map.json").c_str());
 }
 
 UR5eAgent::UR5eAgent(const std::string& name, const UR5eRobot& robot)
