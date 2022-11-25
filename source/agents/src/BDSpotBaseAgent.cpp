@@ -29,9 +29,12 @@ void BDSpotAgent::drawScene(const MotionTrajectory& trajectory, const double& cu
         const double strideDuration = 0.5;
         locomotionController.setStrideDuration(strideDuration);
 
+        const Eigen::Vector6d initialSpotPose = getSpotBasePoseFromRobotState(getInitialRobotState());
+        const Eigen::Vector6d initialSpotVelocity = getInitialRobotVelocity().segment(0, 6);
+
         std::vector<std::pair<Eigen::Vector6d, double>> baseTrajectory;
-        baseTrajectory.emplace_back(std::make_pair(getInitialRobotState(), 0.0));
-        baseTrajectory.emplace_back(std::make_pair(getInitialRobotState() + 2.0 * strideDuration * getInitialRobotVelocity(), 2.0 * strideDuration));
+        baseTrajectory.emplace_back(std::make_pair(initialSpotPose, 0.0));
+        baseTrajectory.emplace_back(std::make_pair(initialSpotPose + 2.0 * strideDuration * initialSpotVelocity, 2.0 * strideDuration));
 
         locomotionController.computeRobotStateForTime(currentSpotState, baseTrajectory, locomotionTime, isInStand);
         currentSpotState.segment(0, 6) = getInitialRobotState().segment(0, 6);
@@ -44,7 +47,7 @@ void BDSpotAgent::drawScene(const MotionTrajectory& trajectory, const double& cu
         for (int i = -1; i < (int)trajectory.numSteps; i++) {
             const Eigen::VectorXd agentState = getAgentStateForTrajectoryIndex(trajectory, i);
             const double time = trajectory.getTimeForIndex(i);
-            baseTrajectory.emplace_back(std::make_pair(getSpotBasePoseFromAgentState(agentState), time));
+            baseTrajectory.emplace_back(std::make_pair(getSpotBasePoseFromRobotState(getRobotStateFromAgentState(agentState)), time));
         }
         locomotionController.computeRobotStateForTime(currentSpotState, baseTrajectory, currentTime, isInStand);
     }
@@ -61,7 +64,7 @@ void BDSpotAgent::drawScene(const MotionTrajectory& trajectory, const double& cu
 
 void BDSpotAgent::drawScene(const Eigen::VectorXd& agentState) const {
     Eigen::VectorXd spotState(initialSpotState);
-    spotState.segment(0, 6) = getSpotBasePoseFromAgentState(agentState);
+    spotState.segment(0, 6) = getSpotBasePoseFromRobotState(getRobotStateFromAgentState(agentState));
     spotRobot.drawVisuals(spotState, std::nullopt, visualAlpha);
     rapt::Agent::drawScene(agentState);
 }
@@ -97,8 +100,8 @@ BDSpotBaseAgent::BDSpotBaseAgent(const std::string& name, const BDSpotFloatingRo
 BDSpotBaseAgent::BDSpotBaseAgent(const std::string& name, const BDSpotFloatingRobot& floatingBaseRobot, const BDSpotBaseRobot& spotBaseRobot)
     : BDSpotBaseAgent(name, floatingBaseRobot, spotBaseRobot, Eigen::VectorXd::Zero(6)) {}
 
-Eigen::Vector6d BDSpotBaseAgent::getSpotBasePoseFromAgentState(const Eigen::VectorXd& agentState) const {
-    return agentState;
+Eigen::Vector6d BDSpotBaseAgent::getSpotBasePoseFromRobotState(const Eigen::VectorXd& robotState) const {
+    return robotState;
 }
 
 }  // namespace lenny::agents
