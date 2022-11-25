@@ -17,9 +17,13 @@ BDSpotAgent::BDSpotAgent(const std::string& name, const robot::Robot& agentRobot
     //Check robot
     if (spotRobot.getStateSize() != 18 || spotRobot.name != "spot")
         LENNY_LOG_ERROR("Are we sure this is the correct robot!?!")
+
+    //Draw settings
+    locomotionController.showTrajectories = false;
 }
 
 void BDSpotAgent::drawScene(const MotionTrajectory& trajectory, const double& currentTime, const bool& isRecedingHorizon) const {
+    //Compute spot state
     if (isRecedingHorizon) {
         locomotionTime += trajectory.deltaT;
         const double strideDuration = 0.5;
@@ -45,11 +49,13 @@ void BDSpotAgent::drawScene(const MotionTrajectory& trajectory, const double& cu
         locomotionController.computeRobotStateForTime(currentSpotState, baseTrajectory, currentTime, isInStand);
     }
 
-    Eigen::VectorXd spotState;
-    spotRobot.drawVisuals(spotState, std::nullopt, visualAlpha);
-
+    //Draw locomotion controller info
     locomotionController.drawScene();
 
+    //Draw spot robot
+    spotRobot.drawVisuals(currentSpotState, std::nullopt, visualAlpha);
+
+    //Draw agent robot
     rapt::Agent::drawScene(trajectory, currentTime, isRecedingHorizon);
 }
 

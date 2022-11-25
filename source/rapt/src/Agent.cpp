@@ -4,6 +4,8 @@
 #include <lenny/tools/Gui.h>
 #include <lenny/tools/Trajectory.h>
 
+#include <fstream>
+
 namespace lenny::rapt {
 
 tools::FiniteDifference Agent::fd = tools::FiniteDifference("Agent");
@@ -320,22 +322,60 @@ void Agent::drawGui(const bool withDrawingOptions) {
 
         if (Gui::I->TreeNode("Collision")) {
             if (Gui::I->TreeNode("Primitives")) {
-                int iter = 0;
-                for (auto& primitive : collisionPrimitives)
-                    primitive->drawGui(primitive->parent->description + " - " + std::to_string(iter++));
+                if (Gui::I->TreeNode("List")) {
+                    int iter = 0;
+                    for (auto& primitive : collisionPrimitives)
+                        primitive->drawGui(primitive->parent->description + " - " + std::to_string(iter++));
+
+                    Gui::I->TreePop();
+                }
+
+                if (Gui::I->TreeNode("Save & Load")) {
+                    if (Gui::I->Button("Save To File"))
+                        saveCollisionPrimitivesToFile(LENNY_PROJECT_FOLDER "/logs/CollisionPrimitives-" + name + "-" + tools::utils::getCurrentDateAndTime() +
+                                                      ".json");
+
+                    if (Gui::I->Button("Load From File"))
+                        loadCollisionPrimitivesFromFile(nullptr);
+
+                    Gui::I->TreePop();
+                }
 
                 Gui::I->TreePop();
             }
 
-            Gui::I->Slider("Ignore Consecutive Link Index", ignoreConsecutiveLinksIndex, 0, 10);
+            if (Gui::I->TreeNode("Link Map (Self-Collision)")) {
+                if (Gui::I->TreeNode("Generate")) {
+                    static uint ignoreConsecutiveLinksIndex = 1;
+                    Gui::I->Slider("Ignore Consecutive Link Index", ignoreConsecutiveLinksIndex, 0, 10);
+                    if (Gui::I->Button("Generate Map"))
+                        generateSelfCollisionLinkMap(ignoreConsecutiveLinksIndex);
 
-            if (Gui::I->TreeNode("Save & Load")) {
-                if (Gui::I->Button("Save To File"))
-                    saveCollisionPrimitivesToFile(LENNY_PROJECT_FOLDER "/logs/CollisionPrimitives-" + name + "-" + tools::utils::getCurrentDateAndTime() +
-                                                  ".json");
+                    Gui::I->TreePop();
+                }
 
-                if (Gui::I->Button("Load From File"))
-                    loadCollisionPrimitivesFromFile(nullptr);
+                if (Gui::I->TreeNode("Map")) {
+                    for (const auto& [linkName, linkNameList] : selfCollisionLinkMap) {
+                        if (Gui::I->TreeNode(linkName.c_str())) {
+                            for (const auto& entry : linkNameList)
+                                Gui::I->Text("--> %s", entry.c_str());
+                            Gui::I->TreePop();
+                        }
+                    }
+
+                    Gui::I->TreePop();
+                }
+
+                if (Gui::I->TreeNode("Save & Load")) {
+                    if (Gui::I->Button("Save To File"))
+                        saveSelfCollisionLinkMapToFile(LENNY_PROJECT_FOLDER "/logs/SelfCollisionLinkMap-" + name + "-" + tools::utils::getCurrentDateAndTime() +
+                                                       ".json");
+
+                    if (Gui::I->Button("Load From File"))
+                        loadSelfCollisionLinkMapFromFile(nullptr);
+
+                    Gui::I->TreePop();
+                }
 
                 Gui::I->TreePop();
             }
@@ -396,6 +436,91 @@ bool Agent::loadCollisionPrimitivesFromFile(const char* filePath) {
         return std::make_shared<AgentCollisionParent>(*this, linkName);
     };
     return collision::loadPrimitivesFromFile(collisionPrimitives, f_getParent, filePath);
+}
+
+void Agent::generateSelfCollisionLinkMap(const uint& ignoreConsecutiveLinksIndex) {
+    selfCollisionLinkMap.clear();
+    for (auto it_A = robot.links.begin(); it_A != robot.links.end(); it_A++) {
+        selfCollisionLinkMap.insert({it_A->first, {}});
+        for (auto it_B = it_A; it_B != robot.links.end(); it_B++) {
+            const int numJointsInbetween = robot.getNumberOfJointsInbetween(it_A->first, it_B->first);
+            if (numJointsInbetween != 0 && (numJointsInbetween < 0 || numJointsInbetween > (int)ignoreConsecutiveLinksIndex))
+                selfCollisionLinkMap.at(it_A->first).emplace_back(it_B->first);
+        }
+    }
+}
+
+bool Agent::saveSelfCollisionLinkMapToFile(const std::string& filePath) const {
+    //Check file extensions
+    if (!tools::utils::checkFileExtension(filePath, "json"))
+        LENNY_LOG_ERROR("File `%s` should be a `json` file", filePath.c_str())
+
+    //Open file
+    std::ofstream file(filePath);
+    if (!file.is_open()) {
+        LENNY_LOG_WARNING("File `%s` could not be opened\n", filePath.c_str());
+        return false;
+    }
+
+    //To json
+    json js;
+    for (const auto& [linkName, linkNameList] : selfCollisionLinkMap) {
+        json js_tmp;
+        js_tmp["link"] = linkName;
+        js_tmp["links"] = linkNameList;
+        js.push_back(js_tmp);
+    }
+
+    //Stream to file
+    file << std::setw(2) << js << std::endl;
+
+    //Close file
+    file.close();
+
+    //Wrap up
+    LENNY_LOG_INFO("Successfully saved self collision link map into file `%s`", filePath.c_str());
+    return true;
+}
+
+bool Agent::loadSelfCollisionLinkMapFromFile(const char* fP) {
+    //Initialize file path
+    const std::string filePath = fP ? std::string(fP) : tools::utils::browseFile();
+
+    //Check file extensions
+    if (!tools::utils::checkFileExtension(filePath, "json"))
+        LENNY_LOG_ERROR("File `%s` should be a `json` file", filePath.c_str())
+
+    //Open file
+    std::ifstream file(filePath);
+    if (!file.is_open())
+        LENNY_LOG_ERROR("File `%s` could not be opened\n", filePath.c_str());
+
+    //Load json from file
+    json js;
+    file >> js;
+
+    //From json
+    selfCollisionLinkMap.clear();
+    for (const auto& js_tmp : js) {
+        //Read entries
+        const std::string link = js_tmp.value("link", std::string());
+        const std::vector<std::string> links = js_tmp.value("links", std::vector<std::string>());
+
+        //Check entries
+        robot.checkLinkName(link);
+        for (const auto& ln : links)
+            robot.checkLinkName(ln);
+
+        //Add to map
+        selfCollisionLinkMap.insert({link, links});
+    }
+
+    //Close file
+    file.close();
+
+    //Wrap up
+    LENNY_LOG_INFO("Self collision link map successfully loaded from file `%s`", filePath.c_str());
+    return true;
 }
 
 void Agent::convertRobotJacobianToAgentJacobian(Eigen::MatrixXd& agentJacobian, const Eigen::MatrixXd& robotJacobian) const {

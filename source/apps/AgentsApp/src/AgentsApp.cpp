@@ -20,7 +20,7 @@ AgentsApp::AgentsApp() : gui::Application("AgentsApp") {
 
 void AgentsApp::drawScene() const {
     for (rapt::Agent::SPtr agent : agents)
-        agent->drawScene(agent->getInitialAgentState());
+        agent->drawScene(rapt::Agent::MotionTrajectory(agent->getInitialAgentState(), 1, 1.0), 0.0, false);
 }
 
 void AgentsApp::drawGui() {
@@ -30,9 +30,7 @@ void AgentsApp::drawGui() {
 
     for (rapt::Agent::SPtr agent : agents)
         agent->drawGui(true);
-
-    spotBaseRobot.drawGui();
-
+    
     ImGui::End();
 }
 
