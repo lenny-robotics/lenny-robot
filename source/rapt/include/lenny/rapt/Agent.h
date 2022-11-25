@@ -124,10 +124,10 @@ public:
     const std::string name;
     const robot::Robot& robot;
     std::vector<Gripper::UPtr> grippers;
-    std::vector<collision::Primitive::SPtr> collisionPrimitives;
-    std::unordered_map<std::string, std::vector<std::string>> selfCollisionLinkMap;  //[linkName, linkNames]
-    tools::Transformation localBaseTrafo = tools::Transformation();                  //For base constraints
-    Eigen::QuaternionD nominalBaseRotation = Eigen::QuaternionD::Identity();         //For base pose constraints
+    std::unordered_map<std::string, std::vector<collision::Primitive::SPtr>> collisionPrimitives;  //[linkName, primitives]
+    std::unordered_map<std::string, std::vector<std::string>> selfCollisionLinkMap;                //[linkName, linkNames]
+    tools::Transformation localBaseTrafo = tools::Transformation();                                //For base constraints
+    Eigen::QuaternionD nominalBaseRotation = Eigen::QuaternionD::Identity();                       //For base pose constraints
 
     //--- Drawing
     double infoAlpha = 1.0;
