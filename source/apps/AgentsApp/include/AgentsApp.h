@@ -32,12 +32,12 @@ public:
     agents::BDSpotArmRobot spotArmRobot = agents::BDSpotArmRobot(gui::Model::f_loadModel);
 
     std::vector<rapt::Agent::SPtr> agents = {std::make_shared<agents::ABBYuMiAgent>("YuMi", yuMiRobot),
-                                              std::make_shared<agents::FloatingBaseAgent>("Base", baseRobot),
-                                              std::make_shared<agents::FrankaPandaAgent>("Panda", pandaRobot),
-                                              std::make_shared<agents::KinovaGen3Agent>("Kinova", kinovaRobot),
-                                              std::make_shared<agents::UR5eAgent>("UR5", urRobot),
-                                              std::make_shared<agents::BDSpotBaseAgent>("Spot Base", spotFloatingRobot, spotBaseRobot),
-                                              std::make_shared<agents::BDSpotArmAgent>("Spot Arm", spotArmRobot, spotBaseRobot)};
+                                             std::make_shared<agents::FloatingBaseAgent>("Base", baseRobot),
+                                             std::make_shared<agents::FrankaPandaAgent>("Panda", pandaRobot),
+                                             std::make_shared<agents::KinovaGen3Agent>("Kinova", kinovaRobot),
+                                             std::make_shared<agents::UR5eAgent>("UR5", urRobot),
+                                             std::make_shared<agents::BDSpotBaseAgent>("Spot Base", spotFloatingRobot, spotBaseRobot),
+                                             std::make_shared<agents::BDSpotArmAgent>("Spot Arm", spotArmRobot, spotBaseRobot)};
 };
 
 }  // namespace lenny

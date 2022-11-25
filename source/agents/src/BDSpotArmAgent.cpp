@@ -50,6 +50,9 @@ BDSpotArmAgent::BDSpotArmAgent(const std::string& name, const BDSpotArmRobot& ar
     //Setup collision primitives
     loadCollisionPrimitivesFromFile(std::string(BDSpotArmRobot::folderPath + "/collision_primitives.json").c_str());
 
+    //Setup self-collision link map
+    loadSelfCollisionLinkMapFromFile(std::string(BDSpotArmRobot::folderPath + "/self_collision_link_map.json").c_str());
+
     //Set local base trafo
     localBaseTrafo.position = Eigen::Vector3d(0.292, 0.070, 0.0);
 }

@@ -56,14 +56,13 @@ void BDSpotAgent::drawScene(const MotionTrajectory& trajectory, const double& cu
     spotRobot.drawVisuals(currentSpotState, std::nullopt, visualAlpha);
 
     //Draw agent robot
-    rapt::Agent::drawScene(trajectory, currentTime, isRecedingHorizon);
+    rapt::Agent::drawScene(getAgentStateForTrajectoryTime(trajectory, currentTime));
 }
 
 void BDSpotAgent::drawScene(const Eigen::VectorXd& agentState) const {
     Eigen::VectorXd spotState(initialSpotState);
     spotState.segment(0, 6) = getSpotBasePoseFromAgentState(agentState);
     spotRobot.drawVisuals(spotState, std::nullopt, visualAlpha);
-
     rapt::Agent::drawScene(agentState);
 }
 
@@ -90,6 +89,9 @@ BDSpotBaseAgent::BDSpotBaseAgent(const std::string& name, const BDSpotFloatingRo
 
     //Setup collision primitives
     loadCollisionPrimitivesFromFile(std::string(BDSpotBaseRobot::folderPath + "/collision_primitives.json").c_str());
+
+    //Setup self-collision link map
+    loadSelfCollisionLinkMapFromFile(std::string(BDSpotBaseRobot::folderPath + "/self_collision_link_map.json").c_str());
 }
 
 BDSpotBaseAgent::BDSpotBaseAgent(const std::string& name, const BDSpotFloatingRobot& floatingBaseRobot, const BDSpotBaseRobot& spotBaseRobot)

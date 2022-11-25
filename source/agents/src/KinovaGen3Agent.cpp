@@ -21,6 +21,9 @@ KinovaGen3Agent::KinovaGen3Agent(const std::string& name, const KinovaGen3Robot&
 
     //Setup collision primitives
     loadCollisionPrimitivesFromFile(std::string(KinovaGen3Robot::folderPath + "/collision_primitives.json").c_str());
+
+    //Setup self-collision link map
+    loadSelfCollisionLinkMapFromFile(std::string(KinovaGen3Robot::folderPath + "/self_collision_link_map.json").c_str());
 }
 
 KinovaGen3Agent::KinovaGen3Agent(const std::string& name, const KinovaGen3Robot& robot)
