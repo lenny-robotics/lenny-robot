@@ -27,7 +27,7 @@ void PrimitiveGeneratorApp::autogenerateCollisionPrimitives() {
                     minMax.at(i) = -signs.at(i) * HUGE_VALF;
 
                 //Loop over meshes
-                for (const gui::Model::Mesh& mesh : model->getMeshes()) {
+                for (const gui::Model::Mesh& mesh : model->meshes) {
                     //Loop over vertices
                     for (const gui::Model::Mesh::Vertex& vertex : mesh.vertices) {
                         const Eigen::Vector3d vertexPosition = gui::utils::toEigen(vertex.position).cwiseProduct(visual.scale);
