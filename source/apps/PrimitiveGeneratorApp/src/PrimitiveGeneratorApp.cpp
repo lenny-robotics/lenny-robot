@@ -7,6 +7,7 @@ namespace lenny {
 
 PrimitiveGeneratorApp::PrimitiveGeneratorApp() : gui::Application("PrimitiveGeneratorApp") {
     showOrigin = false;
+    agent.showCollisionPrimitives = true;
 }
 
 void PrimitiveGeneratorApp::autogenerateCollisionPrimitives() {

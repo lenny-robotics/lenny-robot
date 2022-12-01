@@ -1,5 +1,7 @@
 #pragma once
+#if !defined WIN32
 #pragma GCC diagnostic ignored "-Wformat-security"
+#endif
 
 #include <tinyxml2.h>
 

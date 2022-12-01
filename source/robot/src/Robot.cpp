@@ -757,7 +757,7 @@ std::optional<Eigen::VectorXd> Robot::loadStateFromFile(const char* fP) const {
     std::optional<Eigen::VectorXd> state = std::nullopt;
 
     //Initialize file path
-    std::string filePath = fP ? std::string(fP) : tools::utils::browseFile();
+    const std::string filePath = fP ? std::string(fP) : tools::utils::browseFile();
 
     //Check file extensions
     if (!tools::utils::checkFileExtension(filePath, "json")) {
@@ -782,7 +782,7 @@ std::optional<Eigen::VectorXd> Robot::loadStateFromFile(const char* fP) const {
     for (auto& element : js) {
         if (iter == 0) {
             //Load robot name
-            const std::string robotName = element.value("name", decltype(robotName)());
+            const std::string robotName = element.value("name", std::string());
             if (robotName != this->name)
                 LENNY_LOG_ERROR("Trying to load state for wrong robot, namely `%s`", robotName.c_str())
         } else if (iter <= 6) {

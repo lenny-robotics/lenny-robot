@@ -1,7 +1,6 @@
 project(rapt) #robot agent planning tools
 
 file(GLOB sources
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/${PROJECT_NAME}/*.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
         )
 

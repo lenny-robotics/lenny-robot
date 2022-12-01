@@ -1,7 +1,6 @@
 project(RobotTests)
 
 file(GLOB sources
-        ${CMAKE_CURRENT_SOURCE_DIR}/*.h
         ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
         )
 
@@ -12,7 +11,7 @@ target_link_libraries(${PROJECT_NAME}
         )
 
 target_include_directories(${PROJECT_NAME}
-        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
         )
 
 set(LENNYROBOT_TESTAPP_FOLDER "\"${CMAKE_CURRENT_SOURCE_DIR}\"" CACHE STRING "")
