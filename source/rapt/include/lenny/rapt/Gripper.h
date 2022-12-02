@@ -28,7 +28,7 @@ public:
     tools::Transformation localTrafo;  //Local transformation to gripper fingers
     double fingerPercentage = 0.0;     //Between 0 and 1, where 0 is fully closed, and 1 is full open
     std::vector<robot::Visual> visuals;
-    bool showGripLocation = true;
+    bool showGripLocation = false;
 };
 
 }  // namespace lenny::agent

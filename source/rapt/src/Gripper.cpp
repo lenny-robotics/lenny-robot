@@ -25,6 +25,7 @@ void Gripper::drawGui() {
         Gui::I->Slider("Finger Percentage", fingerPercentage, 0.0, 1.0);
         for (uint iter = 0; robot::Visual & visual : visuals)
             visual.drawGui(("Visual - " + std::to_string(iter++)).c_str());
+        Gui::I->Checkbox("Show Grip Location", showGripLocation);
 
         drawAdditionalGuiContent();
 
