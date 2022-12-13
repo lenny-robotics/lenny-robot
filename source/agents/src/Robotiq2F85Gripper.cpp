@@ -111,8 +111,10 @@ void Robotiq2F85Gripper::Constraint::drawGui() {
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-Robotiq2F85Gripper::Robotiq2F85Gripper(const robot::Robot& robot, const std::string& linkName, const tools::Transformation& localTrafo)
-    : rapt::Gripper(robot, linkName, localTrafo, "Robotiq2F85"),
+Robotiq2F85Gripper::Robotiq2F85Gripper(const robot::Robot& robot, const std::string& linkName, const tools::Transformation& localGripperTrafo,
+                                       const tools::Transformation& localMountTrafo)
+    : rapt::Gripper(robot, linkName, localGripperTrafo, "Robotiq2F85"),
+      localMountTrafo(localMountTrafo),
       gripperRobot(folderPath + "/robot.urdf", robot.f_loadModel),
       gripperRobotState(Eigen::VectorXd::Zero(gripperRobot.getStateSize())),
       optimizer("Robotiq2F85GripperOptimizer"),
@@ -130,8 +132,7 @@ void Robotiq2F85Gripper::drawScene(const tools::Transformation& globalLinkPose, 
     optimizer.optimize(joints, constraint, 100);
 
     //Get robot state
-    static const tools::Transformation localDrawTrafo(Eigen::Vector3d(0.0, 0.0, -0.094), tools::utils::rotZ(PI / 2.0) * tools::utils::rotX(-PI / 2.0));
-    gripperRobotState.segment(0, 6) = gripperRobot.base->getStateFromTransformation(globalLinkPose * localDrawTrafo);
+    gripperRobotState.segment(0, 6) = gripperRobot.base->getStateFromTransformation(globalLinkPose * localMountTrafo);
     gripperRobotState.segment(6, 6) = joints;
 
     //Draw debug info
@@ -147,6 +148,7 @@ void Robotiq2F85Gripper::drawScene(const tools::Transformation& globalLinkPose, 
 }
 
 void Robotiq2F85Gripper::drawAdditionalGuiContent() {
+    tools::Gui::I->Input("Local Mount Trafo", localMountTrafo);
     gripperRobot.drawGui(true);
     gripperRobot.drawFKGui(gripperRobotState, "Robot State");
     tools::Gui::I->Checkbox("Show Debug Info", showDebugInfo);

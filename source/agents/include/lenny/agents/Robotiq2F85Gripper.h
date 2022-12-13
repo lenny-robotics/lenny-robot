@@ -1,8 +1,8 @@
 #pragma once
 
-#include <lenny/rapt/Gripper.h>
 #include <lenny/optimization/EqualityConstraint.h>
 #include <lenny/optimization/NewtonOptimizer.h>
+#include <lenny/rapt/Gripper.h>
 
 namespace lenny::agents {
 
@@ -32,7 +32,8 @@ private:
     };
 
 public:
-    Robotiq2F85Gripper(const robot::Robot& robot, const std::string& linkName, const tools::Transformation& localTrafo);
+    Robotiq2F85Gripper(const robot::Robot& robot, const std::string& linkName, const tools::Transformation& localGripperTrafo,
+                       const tools::Transformation& localMountTrafo);
     ~Robotiq2F85Gripper() = default;
 
     void drawScene(const tools::Transformation& globalLinkPose, const double& alpha) const override;
@@ -44,6 +45,7 @@ public:
     inline static const std::string folderPath = LENNY_ROBOT_FOLDER "/data/robotiq_2f85gripper";
     mutable robot::Robot gripperRobot;
     bool showDebugInfo = false;
+    tools::Transformation localMountTrafo;
 
 private:
     mutable Eigen::VectorXd gripperRobotState;
