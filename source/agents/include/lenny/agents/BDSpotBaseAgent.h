@@ -8,7 +8,7 @@ namespace lenny::agents {
 class BDSpotBaseRobot : public robot::Robot {
 public:
     BDSpotBaseRobot(const tools::Model::F_loadModel& f_loadModel = nullptr) : robot::Robot(folderPath + "/robot.urdf", f_loadModel) {}
-    inline static const std::string folderPath = LENNY_ROBOT_FOLDER "/data/bd_spot/base";
+    inline static const std::string folderPath = LENNY_ROBOT_FOLDER "/data/bd_spot_base";
 };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------

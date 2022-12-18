@@ -7,9 +7,9 @@
   <!-- sub-link defining detailed meshes for collision with environment -->
   <link name="panda_link0">
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="1.5707964 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/meshes/link0.dae"/>
+        <mesh filename="/meshes/link0.obj"/>
       </geometry>
     </visual>
     <collision>
@@ -48,9 +48,9 @@
   <!-- sub-link defining detailed meshes for collision with environment -->
   <link name="panda_link1">
     <visual>
-      <origin rpy="0 0 0" xyz="0 -0.193 0"/>
+      <origin rpy="1.5707964 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/meshes/link1.dae"/>
+        <mesh filename="/meshes/link1.obj"/>
       </geometry>
     </visual>
     <collision>
@@ -98,9 +98,9 @@
   <!-- sub-link defining detailed meshes for collision with environment -->
   <link name="panda_link2">
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 0.001"/>
+      <origin rpy="1.5707964 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/meshes/link2.dae"/>
+        <mesh filename="/meshes/link2.obj"/>
       </geometry>
     </visual>
     <collision>
@@ -148,9 +148,9 @@
   <!-- sub-link defining detailed meshes for collision with environment -->
   <link name="panda_link3">
     <visual>
-      <origin rpy="0 0 0" xyz="0 -0.124 0.001"/>
+      <origin rpy="1.5707964 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/meshes/link3.dae"/>
+        <mesh filename="/meshes/link3.obj"/>
       </geometry>
     </visual>
     <collision>
@@ -198,9 +198,9 @@
   <!-- sub-link defining detailed meshes for collision with environment -->
   <link name="panda_link4">
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="1.5707964 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/meshes/link4.dae"/>
+        <mesh filename="/meshes/link4.obj"/>
       </geometry>
     </visual>
     <collision>
@@ -248,9 +248,9 @@
   <!-- sub-link defining detailed meshes for collision with environment -->
   <link name="panda_link5">
     <visual>
-      <origin rpy="0 0 0" xyz="0 -0.263 0"/>
+      <origin rpy="1.5707964 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/meshes/link5.dae"/>
+        <mesh filename="/meshes/link5.obj"/>
       </geometry>
     </visual>
     <collision>
@@ -316,19 +316,10 @@
   <!-- sub-link defining detailed meshes for collision with environment -->
   <link name="panda_link6">
     <visual>
-      <origin rpy="0 0 0" xyz="-0.004 0.0 -0.001"/>
+      <origin rpy="1.5707964 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/meshes/link6.dae"/>
+        <mesh filename="/meshes/link6.obj"/>
       </geometry>
-    </visual>
-    <visual>
-      <origin rpy="0 0 0" xyz="-0.004 0.0 -0.015"/>
-      <geometry>
-        <mesh filename="/meshes/cylinder.obj" scale="0.049 0.049 0.033"/>
-      </geometry>
-      <material name="grey">
-        <color rgba="0.67843 0.67843 0.67843 1.0"/>
-      </material>
     </visual>
     <collision>
       <geometry>
@@ -375,9 +366,9 @@
   <!-- sub-link defining detailed meshes for collision with environment -->
   <link name="panda_link7">
     <visual>
-      <origin rpy="0 0 0" xyz="-0.004 -0.050 0.014"/>
+      <origin rpy="1.5707964 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/meshes/link7.dae"/>
+        <mesh filename="/meshes/link7.obj"/>
       </geometry>
     </visual>
     <collision>

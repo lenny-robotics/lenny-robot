@@ -13,7 +13,7 @@ public:
         else
             base->loadLimitsFromFile(std::string(BDSpotBaseRobot::folderPath + "/base_limits_walk.json").c_str());
     }
-    inline static const std::string folderPath = LENNY_ROBOT_FOLDER "/data/bd_spot/arm";
+    inline static const std::string folderPath = LENNY_ROBOT_FOLDER "/data/bd_spot_arm";
     const bool isInStand;
 };
 

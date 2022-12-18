@@ -5,13 +5,13 @@ namespace lenny::agents {
 FrankaPandaAgent::Gripper::Gripper(const robot::Robot& robot)
     : rapt::Gripper(robot, "panda_link7", tools::Transformation(Eigen::Vector3d(-0.004, -0.204, 0.013), Eigen::QuaternionD::Identity()), "Panda Hand") {
     //Initialize visuals
-    visuals.emplace_back(FrankaPandaRobot::folderPath + "/gripper/hand.dae");
-    visuals.emplace_back(FrankaPandaRobot::folderPath + "/gripper/finger.dae");
-    visuals.emplace_back(FrankaPandaRobot::folderPath + "/gripper/finger.dae");
+    visuals.emplace_back(FrankaPandaRobot::folderPath + "/gripper/hand.obj");
+    visuals.emplace_back(FrankaPandaRobot::folderPath + "/gripper/finger.obj");
+    visuals.emplace_back(FrankaPandaRobot::folderPath + "/gripper/finger.obj");
 
-    visuals.at(HAND).localTrafo = tools::Transformation(Eigen::Vector3d(-0.004, -0.104, 0.014), tools::utils::rotX(PI / 2.0));
-    visuals.at(FINGER1).localTrafo = tools::Transformation(Eigen::Vector3d(-0.004, -0.160, 0.014), tools::utils::rotX(PI / 2.0));
-    visuals.at(FINGER2).localTrafo = tools::Transformation(Eigen::Vector3d(-0.004, -0.160, 0.014), tools::utils::rotY(PI) * tools::utils::rotX(PI / 2.0));
+    visuals.at(HAND).localTrafo = tools::Transformation(Eigen::Vector3d(0.0, -0.106, 0.0), tools::utils::rotY(-3.0 * PI / 4.0) * tools::utils::rotZ(PI));
+    visuals.at(FINGER1).localTrafo = tools::Transformation(Eigen::Vector3d(0.0, -0.160, 0.0), tools::utils::rotY(-3.0 * PI / 4.0) * tools::utils::rotZ(PI));
+    visuals.at(FINGER2).localTrafo = tools::Transformation(Eigen::Vector3d(0.0, -0.160, 0.0), tools::utils::rotY(PI) * tools::utils::rotY(-3.0 * PI / 4.0) * tools::utils::rotZ(PI));
 
     if (robot.f_loadModel)
         for (robot::Visual& visual : visuals)
@@ -20,7 +20,7 @@ FrankaPandaAgent::Gripper::Gripper(const robot::Robot& robot)
 
 void FrankaPandaAgent::Gripper::drawScene(const tools::Transformation& globalLinkPose, const double& alpha) const {
     static const Eigen::Vector3d scale = Eigen::Vector3d::Ones();
-    const tools::Transformation localFingerTrafo(Eigen::QuaternionD::Identity(), fingerPercentage * 0.05 * Eigen::Vector3d::UnitY());
+    const tools::Transformation localFingerTrafo(Eigen::QuaternionD::Identity(), -fingerPercentage * 0.05 * Eigen::Vector3d::UnitZ());
 
     const tools::Transformation handPose = globalLinkPose * visuals.at(HAND).localTrafo;
     visuals.at(HAND).model->draw(handPose.position, handPose.orientation, scale, std::nullopt, alpha);
