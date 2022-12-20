@@ -4,4 +4,4 @@ if (NOT TARGET tinyxml2)
 endif ()
 
 # lenny-collision
-fetch_lenny_repository(collision softification-weights)
+fetch_lenny_repository(collision master)
