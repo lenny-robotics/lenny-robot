@@ -7,6 +7,7 @@ JointAngleConstraint::JointAngleConstraint(const TrackerAgenda& agenda) : optimi
     useTensorForHessian = false;
     barrier.setEpsilon(0.0);
     barrier.setStiffness(1.0);
+    softificationWeights.setOnes(2 * 3 * 4);  //Initialize this with 2 constraints x 3 dofs x 4 legs
 }
 
 uint JointAngleConstraint::getConstraintNumber() const {

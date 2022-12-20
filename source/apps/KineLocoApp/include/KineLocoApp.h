@@ -22,8 +22,8 @@ public:
     void drawGui() override;
 
 public:
-    robot::Robot robot = robot::Robot(LENNY_ROBOT_FOLDER "/data/bd_spot/base/robot.urdf", gui::Model::f_loadModel);
-    const Eigen::VectorXd initialSpotState = robot.loadStateFromFile(LENNY_ROBOT_FOLDER "/data/bd_spot/base/default_state.json").value();
+    robot::Robot robot = robot::Robot(LENNY_ROBOT_FOLDER "/data/bd_spot_base/robot.urdf", gui::Model::f_loadModel);
+    const Eigen::VectorXd initialSpotState = robot.loadStateFromFile(LENNY_ROBOT_FOLDER "/data/bd_spot_base/default_state.json").value();
     kineloco::LocomotionController locomotionController =
         kineloco::LocomotionController(robot, initialSpotState,
                                        {kineloco::LimbInfo("front_right_lower_leg", Eigen::Vector3d(0.0, -0.41, 0.0), {0.5, 1.0}),
