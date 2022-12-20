@@ -4,6 +4,7 @@ namespace lenny::kineloco {
 
 LimbPositionConstraint::LimbPositionConstraint(const TrackerAgenda& agenda) : optimization::EqualityConstraint("Limb Position"), agenda(agenda) {
     useTensorForHessian = false;
+    softificationWeights.setOnes(3 * 4);  //Initialize this with 3 positional dofs x 4 legs
 }
 
 uint LimbPositionConstraint::getConstraintNumber() const {

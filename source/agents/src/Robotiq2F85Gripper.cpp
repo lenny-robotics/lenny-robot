@@ -23,6 +23,8 @@ Robotiq2F85Gripper::Constraint::Constraint(const robot::Robot& robot) : optimiza
     jointPairs.at(0) = {"finger_joint", "right_outer_knuckle_joint"};
     jointPairs.at(1) = {"left_inner_finger_joint", "right_inner_finger_joint"};
     jointPairs.at(2) = {"left_inner_knuckle_joint", "right_inner_knuckle_joint"};
+
+    softificationWeights.setOnes(getConstraintNumber());
 }
 
 void Robotiq2F85Gripper::Constraint::setTargetsFromFromFingerPercentage(const double& fingerPercentage) {
