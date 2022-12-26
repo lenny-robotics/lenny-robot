@@ -3,7 +3,7 @@
 namespace lenny::agents {
 
 FrankaPandaAgent::Gripper::Gripper(const robot::Robot& robot)
-    : rapt::Gripper(robot, "panda_link7", tools::Transformation(Eigen::Vector3d(-0.004, -0.204, 0.013), Eigen::QuaternionD::Identity()), "Panda Hand") {
+    : rapt::Gripper(robot, "panda_link7", tools::Transformation(Eigen::Vector3d(0.0, -0.204, 0.0), tools::utils::rotY(3.0 * PI / 4.0)), "Panda Hand") {
     //Initialize visuals
     visuals.emplace_back(FrankaPandaRobot::folderPath + "/gripper/hand.obj");
     visuals.emplace_back(FrankaPandaRobot::folderPath + "/gripper/finger.obj");
@@ -11,7 +11,8 @@ FrankaPandaAgent::Gripper::Gripper(const robot::Robot& robot)
 
     visuals.at(HAND).localTrafo = tools::Transformation(Eigen::Vector3d(0.0, -0.106, 0.0), tools::utils::rotY(-3.0 * PI / 4.0) * tools::utils::rotZ(PI));
     visuals.at(FINGER1).localTrafo = tools::Transformation(Eigen::Vector3d(0.0, -0.160, 0.0), tools::utils::rotY(-3.0 * PI / 4.0) * tools::utils::rotZ(PI));
-    visuals.at(FINGER2).localTrafo = tools::Transformation(Eigen::Vector3d(0.0, -0.160, 0.0), tools::utils::rotY(PI) * tools::utils::rotY(-3.0 * PI / 4.0) * tools::utils::rotZ(PI));
+    visuals.at(FINGER2).localTrafo =
+        tools::Transformation(Eigen::Vector3d(0.0, -0.160, 0.0), tools::utils::rotY(PI) * tools::utils::rotY(-3.0 * PI / 4.0) * tools::utils::rotZ(PI));
 
     if (robot.f_loadModel)
         for (robot::Visual& visual : visuals)

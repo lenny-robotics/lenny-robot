@@ -3,7 +3,8 @@
 namespace lenny::agents {
 
 BDSpotArmAgent::Gripper::Gripper(const BDSpotArmRobot& robot)
-    : rapt::Gripper(robot, "link6", tools::Transformation(Eigen::QuaternionD::Identity(), Eigen::Vector3d(0.17, -0.02, 0.0)), "Gripper") {
+    : rapt::Gripper(robot, "link6", tools::Transformation(tools::utils::rotZ(PI / 2.0) * tools::utils::rotY(PI / 2.0), Eigen::Vector3d(0.17, -0.02, 0.0)),
+                    "Gripper") {
     //Initialize visuals
     visuals.emplace_back(BDSpotArmRobot::folderPath + "/meshes/Jaw.obj");
     robot::Visual& visual = visuals.back();

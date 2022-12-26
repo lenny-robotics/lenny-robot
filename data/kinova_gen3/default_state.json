@@ -47,7 +47,7 @@
   {
     "lenny::robot::Dof": {
       "name": "joint_2",
-      "value": 0.0
+      "value": 0.39269
     }
   },
   {
@@ -59,7 +59,7 @@
   {
     "lenny::robot::Dof": {
       "name": "joint_4",
-      "value": 1.570796
+      "value": 1.57079
     }
   },
   {
@@ -71,7 +71,7 @@
   {
     "lenny::robot::Dof": {
       "name": "joint_6",
-      "value": 0.0
+      "value": 1.178106
     }
   },
   {

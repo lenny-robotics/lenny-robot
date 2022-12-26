@@ -17,7 +17,7 @@ UR5eAgent::UR5eAgent(const std::string& name, const UR5eRobot& robot, const Eige
 
     //Add gripper
     grippers.emplace_back(std::make_unique<Robotiq2F85Gripper>(
-        robot, "wrist_3_link", tools::Transformation(Eigen::Vector3d(0.0, 0.0, -0.250), Eigen::QuaternionD::Identity()),
+        robot, "wrist_3_link", tools::Transformation(Eigen::Vector3d(0.0, 0.0, -0.250), tools::utils::rotX(PI / 2.0) * tools::utils::rotY(-PI / 2.0)),
         tools::Transformation(Eigen::Vector3d(0.0, 0.0, -0.094), tools::utils::rotZ(PI / 2.0) * tools::utils::rotX(-PI / 2.0))));
 
     //Setup collision primitives

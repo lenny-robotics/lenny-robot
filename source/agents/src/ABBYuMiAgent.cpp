@@ -7,7 +7,7 @@ ABBYuMiAgent::Gripper::Gripper(const ABBYuMiRobot& robot, const SIDE side)
           robot, (side == RIGHT) ? "yumi_link_7_r" : "yumi_link_7_l",
           (side == RIGHT)
               ? tools::Transformation(Eigen::QuaternionD(0.873745, 0.371052, -0.067998, 0.307029), 0.9 * Eigen::Vector3d(0.085689, -0.080791, -0.092899))
-              : tools::Transformation(Eigen::QuaternionD(-0.069156, -0.306531, 0.873647, -0.371479), 0.9 * Eigen::Vector3d(0.085688, -0.080791, 0.092900)),
+              : tools::Transformation(Eigen::QuaternionD(0.873647, -0.371479, 0.069156, 0.306531), 0.9 * Eigen::Vector3d(0.085688, -0.080791, 0.092900)),
           (side == RIGHT) ? "Right Gripper" : "Left Gripper"),
       side(side) {
     //Initialize visuals

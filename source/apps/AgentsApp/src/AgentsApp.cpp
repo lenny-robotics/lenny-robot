@@ -15,6 +15,9 @@ AgentsApp::AgentsApp() : gui::Application("AgentsApp") {
         initialRobotState[2] = tools::utils::getRandomNumberInRange({-2.0, 2.0});
         initialRobotState[5] = tools::utils::getRandomNumberInRange({-PI / 2.0, PI / 2.0});
         agent->setInitialRobotStateFromRobotState(initialRobotState);
+
+        for (rapt::Gripper::UPtr& gripper : agent->grippers)
+            gripper->showGripLocation = true;
     }
 }
 
@@ -30,7 +33,7 @@ void AgentsApp::drawGui() {
 
     for (rapt::Agent::SPtr agent : agents)
         agent->drawGui(true);
-    
+
     ImGui::End();
 }
 
