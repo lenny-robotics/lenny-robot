@@ -1,12 +1,6 @@
 <?xml version="1.0" ?>
 <robot name="spot_floating_base">
     <link name="body">
-        <visual>
-            <origin rpy="1.570796 0 0" xyz="0 0 0"/>
-            <geometry>
-                <mesh filename="/meshes/body.obj"/>
-            </geometry>
-        </visual>
     </link>
 </robot>
 

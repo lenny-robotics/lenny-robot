@@ -24,40 +24,42 @@ BDSpotAgent::BDSpotAgent(const std::string& name, const robot::Robot& agentRobot
 
 void BDSpotAgent::drawScene(const MotionTrajectory& trajectory, const double& currentTime, const bool& isRecedingHorizon) const {
     //Compute spot state
-    if (isRecedingHorizon) {
-        locomotionTime += trajectory.deltaT;
-        const double strideDuration = 0.5;
-        locomotionController.setStrideDuration(strideDuration);
+    if (showVisuals) {
+        if (isRecedingHorizon) {
+            locomotionTime += trajectory.deltaT;
+            const double strideDuration = 0.5;
+            locomotionController.setStrideDuration(strideDuration);
 
-        const Eigen::Vector6d initialSpotPose = getSpotBasePoseFromRobotState(getInitialRobotState());
-        const Eigen::Vector6d initialSpotVelocity = getInitialRobotVelocity().segment(0, 6);
+            const Eigen::Vector6d initialSpotPose = getSpotBasePoseFromRobotState(getInitialRobotState());
+            const Eigen::Vector6d initialSpotVelocity = getInitialRobotVelocity().segment(0, 6);
 
-        std::vector<std::pair<Eigen::Vector6d, double>> baseTrajectory;
-        baseTrajectory.emplace_back(std::make_pair(initialSpotPose, 0.0));
-        baseTrajectory.emplace_back(std::make_pair(initialSpotPose + 2.0 * strideDuration * initialSpotVelocity, 2.0 * strideDuration));
+            std::vector<std::pair<Eigen::Vector6d, double>> baseTrajectory;
+            baseTrajectory.emplace_back(std::make_pair(initialSpotPose, 0.0));
+            baseTrajectory.emplace_back(std::make_pair(initialSpotPose + 2.0 * strideDuration * initialSpotVelocity, 2.0 * strideDuration));
 
-        locomotionController.computeRobotStateForTime(currentSpotState, baseTrajectory, locomotionTime, isInStand);
-        currentSpotState.segment(0, 6) = getInitialRobotState().segment(0, 6);
+            locomotionController.computeRobotStateForTime(currentSpotState, baseTrajectory, locomotionTime, isInStand);
+            currentSpotState.segment(0, 6) = getInitialRobotState().segment(0, 6);
 
-        if (locomotionTime > 2.0 * strideDuration)
-            locomotionTime = 0.0;
-    } else {
-        currentSpotState = initialSpotState;
-        std::vector<std::pair<Eigen::Vector6d, double>> baseTrajectory;
-        for (int i = -1; i < (int)trajectory.numSteps; i++) {
-            const Eigen::VectorXd agentState = getAgentStateForTrajectoryIndex(trajectory, i);
-            const double time = trajectory.getTimeForIndex(i);
-            baseTrajectory.emplace_back(std::make_pair(getSpotBasePoseFromRobotState(getRobotStateFromAgentState(agentState)), time));
+            if (locomotionTime > 2.0 * strideDuration)
+                locomotionTime = 0.0;
+        } else {
+            currentSpotState = initialSpotState;
+            std::vector<std::pair<Eigen::Vector6d, double>> baseTrajectory;
+            for (int i = -1; i < (int)trajectory.numSteps; i++) {
+                const Eigen::VectorXd agentState = getAgentStateForTrajectoryIndex(trajectory, i);
+                const double time = trajectory.getTimeForIndex(i);
+                baseTrajectory.emplace_back(std::make_pair(getSpotBasePoseFromRobotState(getRobotStateFromAgentState(agentState)), time));
+            }
+            locomotionController.computeRobotStateForTime(currentSpotState, baseTrajectory, currentTime, isInStand);
         }
-        locomotionController.computeRobotStateForTime(currentSpotState, baseTrajectory, currentTime, isInStand);
+
+        //Draw spot robot
+        spotRobot.drawVisuals(currentSpotState, std::nullopt, visualAlpha);
     }
 
     //Draw locomotion controller info
     locomotionController.drawScene();
-
-    //Draw spot robot
-    spotRobot.drawVisuals(currentSpotState, std::nullopt, visualAlpha);
-
+    
     //Draw agent robot
     rapt::Agent::drawScene(getAgentStateForTrajectoryTime(trajectory, currentTime));
 }
