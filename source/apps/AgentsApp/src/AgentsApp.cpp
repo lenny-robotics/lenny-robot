@@ -34,9 +34,9 @@ void AgentsApp::drawGui() {
     for (rapt::Agent::SPtr agent : agents)
         agent->drawGui(true);
 
-    if (ImGui::Begin("Mesh Simplification")) {
+    if (ImGui::TreeNode("Mesh Simplification")) {
         static float threshold = 0.8f;
-        static float targetError = 0.01;
+        static float targetError = 0.01f;
         static bool saveToFile = false;
 
         ImGui::SliderFloat("Threshold", &threshold, 0.f, 1.f);
@@ -64,6 +64,8 @@ void AgentsApp::drawGui() {
             if (ImGui::Button(agent->name.c_str()))
                 simplifyAgent(agent);
         }
+
+        ImGui::TreePop();
     }
 
     ImGui::End();
