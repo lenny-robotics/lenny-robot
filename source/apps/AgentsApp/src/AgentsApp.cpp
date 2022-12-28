@@ -34,46 +34,6 @@ void AgentsApp::drawGui() {
     for (rapt::Agent::SPtr agent : agents)
         agent->drawGui(true);
 
-    if (ImGui::TreeNode("Mesh Simplification")) {
-        static float threshold = 0.8f;
-        static float targetError = 0.01f;
-        static bool saveToFile = false;
-
-        ImGui::SliderFloat("Threshold", &threshold, 0.f, 1.f);
-        ImGui::SliderFloat("Target Error", &targetError, 0.f, 1.f);
-        ImGui::Checkbox("Save To File", &saveToFile);
-
-        auto simplyVisual = [&](const robot::Visual& visual) -> void {
-            if (gui::Model* model = dynamic_cast<gui::Model*>(visual.model.get()))
-                model->simplify(threshold, targetError, saveToFile);
-        };
-
-        auto simplifyRobot = [&](const robot::Robot& robot) -> void {
-            //Loop over robot visuals
-            for (auto& [linkName, link] : robot.links)
-                for (auto& visual : link.visuals)
-                    simplyVisual(visual);
-        };
-
-        auto simplifyAgent = [&](rapt::Agent::SPtr agent) -> void {
-            simplifyRobot(agent->robot);
-
-            //Loop over gripper visuals
-            for (auto& gripper : agent->grippers)
-                for (auto& visual : gripper->visuals)
-                    simplyVisual(visual);
-        };
-
-        for (rapt::Agent::SPtr agent : agents) {
-            if (ImGui::Button(agent->name.c_str()))
-                simplifyAgent(agent);
-        }
-        if (ImGui::Button("Spot Robot"))
-            simplifyRobot(spotBaseRobot);
-
-        ImGui::TreePop();
-    }
-
     ImGui::End();
 }
 
