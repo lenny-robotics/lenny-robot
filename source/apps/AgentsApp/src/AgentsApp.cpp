@@ -48,11 +48,15 @@ void AgentsApp::drawGui() {
                 model->simplify(threshold, targetError, saveToFile);
         };
 
-        auto simplifyAgent = [&](rapt::Agent::SPtr agent) -> void {
+        auto simplifyRobot = [&](const robot::Robot& robot) -> void {
             //Loop over robot visuals
-            for (auto& [linkName, link] : agent->robot.links)
+            for (auto& [linkName, link] : robot.links)
                 for (auto& visual : link.visuals)
                     simplyVisual(visual);
+        };
+
+        auto simplifyAgent = [&](rapt::Agent::SPtr agent) -> void {
+            simplifyRobot(agent->robot);
 
             //Loop over gripper visuals
             for (auto& gripper : agent->grippers)
@@ -64,6 +68,8 @@ void AgentsApp::drawGui() {
             if (ImGui::Button(agent->name.c_str()))
                 simplifyAgent(agent);
         }
+        if (ImGui::Button("Spot Robot"))
+            simplifyRobot(spotBaseRobot);
 
         ImGui::TreePop();
     }

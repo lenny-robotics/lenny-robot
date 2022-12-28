@@ -1,9 +1,23 @@
-# CAD Exchanger 3.6.0 (cadexchanger.com)
-# Material Count: 1
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v5.2.1077939290)
+
+newmtl DefaultMaterial
+Kd 0.600000024 0.600000024 0.600000024
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
 
 newmtl Material_1
-Ns 0.000000
-Ka 0.200000 0.200000 0.200000
-Kd 0.752941 0.752941 0.752941
-Ks 0.000000 0.000000 0.000000
-Ke 0.000000 0.000000 0.000000
+Kd 0.752941012 0.752941012 0.752941012
+Ka 0.200000003 0.200000003 0.200000003
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+
