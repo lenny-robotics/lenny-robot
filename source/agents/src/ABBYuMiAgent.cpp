@@ -34,12 +34,12 @@ void ABBYuMiAgent::Gripper::drawScene(const tools::Transformation& globalLinkPos
 
     const tools::Transformation finger1Pose =
         globalLinkPose * visuals.at(FINGER1).localTrafo *
-        tools::Transformation(Eigen::QuaternionD::Identity(), Eigen::Vector3d((0.5 - fingerPercentage) * gripperLength, 0.0, 0.0));
+        tools::Transformation(Eigen::QuaternionD::Identity(), Eigen::Vector3d((0.5 - getFingerPosition()) * gripperLength, 0.0, 0.0));
     visuals.at(FINGER1).model->draw(finger1Pose.position, finger1Pose.orientation, visuals.at(FINGER1).scale, std::nullopt, alpha);
 
     const tools::Transformation finger2Pose =
         globalLinkPose * visuals.at(FINGER2).localTrafo *
-        tools::Transformation(Eigen::QuaternionD::Identity(), Eigen::Vector3d(-1.0 * (0.5 - fingerPercentage) * gripperLength, 0.0, 0.0));
+        tools::Transformation(Eigen::QuaternionD::Identity(), Eigen::Vector3d(-1.0 * (0.5 - getFingerPosition()) * gripperLength, 0.0, 0.0));
     visuals.at(FINGER2).model->draw(finger2Pose.position, finger2Pose.orientation, visuals.at(FINGER2).scale, std::nullopt, alpha);
 
     rapt::Gripper::drawScene(globalLinkPose, alpha);

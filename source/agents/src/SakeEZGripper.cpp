@@ -41,7 +41,8 @@ void SakeEZGripper::drawScene(const tools::Transformation& globalLinkPose, const
     const tools::Transformation pose_plate = globalLinkPose * localTrafo_plate;
     tools::Renderer::I->drawCylinder(pose_plate.position, pose_plate.orientation, 0.011, 0.043, color_plate);
 
-    const double fingerAngle = (1.0 - fingerPercentage) * (PI / 2.0 + 0.375);
+    const double fingerPosition = getFingerPosition();
+    const double fingerAngle = (1.0 - fingerPosition) * (PI / 2.0 + 0.375);
     const tools::Transformation localFingerTrafo(tools::utils::getRotationQuaternion(fingerAngle, Eigen::Vector3d::UnitY()), Eigen::Vector3d::Zero());
 
     const tools::Transformation pose_palm = globalLinkPose * visuals.at(PALM).localTrafo;

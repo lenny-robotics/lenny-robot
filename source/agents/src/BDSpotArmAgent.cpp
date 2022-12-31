@@ -23,7 +23,7 @@ void BDSpotArmAgent::Gripper::drawScene(const tools::Transformation& globalLinkP
     const robot::Visual& visual = visuals.back();
     const tools::Transformation globalZeroPose = globalLinkPose * visual.localTrafo;
     const Eigen::Vector3d globalRotAxis = globalZeroPose.getGlobalCoordinatesForVector(localRotDir);
-    const Eigen::QuaternionD globalRot = tools::utils::getRotationQuaternion(fingerPercentage * maxAngle, globalRotAxis) * globalZeroPose.orientation;
+    const Eigen::QuaternionD globalRot = tools::utils::getRotationQuaternion(getFingerPosition() * maxAngle, globalRotAxis) * globalZeroPose.orientation;
     const Eigen::Vector3d globalPos = globalZeroPose.getGlobalCoordinatesForPoint(localRotPos) - globalRot * localRotPos;
     visual.model->draw(globalPos, globalRot, visual.scale, visual.color, alpha);
 

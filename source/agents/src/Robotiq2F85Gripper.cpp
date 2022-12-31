@@ -126,7 +126,7 @@ Robotiq2F85Gripper::Robotiq2F85Gripper(const robot::Robot& robot, const std::str
 
 void Robotiq2F85Gripper::drawScene(const tools::Transformation& globalLinkPose, const double& alpha) const {
     //Update constraint
-    constraint.setTargetsFromFromFingerPercentage(fingerPercentage);
+    constraint.setTargetsFromFromFingerPercentage(getFingerPosition());
 
     //Compute joints
     Eigen::VectorXd joints = gripperRobotState.segment(6, 6);

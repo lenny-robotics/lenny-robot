@@ -21,7 +21,7 @@ FrankaPandaAgent::Gripper::Gripper(const robot::Robot& robot)
 
 void FrankaPandaAgent::Gripper::drawScene(const tools::Transformation& globalLinkPose, const double& alpha) const {
     static const Eigen::Vector3d scale = Eigen::Vector3d::Ones();
-    const tools::Transformation localFingerTrafo(Eigen::QuaternionD::Identity(), -fingerPercentage * 0.05 * Eigen::Vector3d::UnitZ());
+    const tools::Transformation localFingerTrafo(Eigen::QuaternionD::Identity(), -getFingerPosition() * 0.05 * Eigen::Vector3d::UnitZ());
 
     const tools::Transformation handPose = globalLinkPose * visuals.at(HAND).localTrafo;
     visuals.at(HAND).model->draw(handPose.position, handPose.orientation, scale, std::nullopt, alpha);
