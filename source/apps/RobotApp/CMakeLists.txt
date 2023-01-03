@@ -18,7 +18,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_compile_definitions(${PROJECT_NAME}
         PUBLIC LENNY_PROJECT_FOLDER=${LENNY_PROJECT_FOLDER}
-        PUBLIC LENNY_ROBOT_FOLDER=${LENNY_ROBOT_FOLDER}
+        PUBLIC LENNY_ROBOT_APP_FOLDER=${LENNY_ROBOT_APP_FOLDER}
         )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)

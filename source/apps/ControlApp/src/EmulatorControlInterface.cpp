@@ -9,6 +9,7 @@ EmulatorControlInterface::EmulatorControlInterface(const robot::Robot& robot, co
     k_P = 1.0;
     k_D = 0.001;
     positionReachedTolerances = 0.001 * Eigen::VectorXd::Ones(getStateSize());
+    emergencyStopTolerances = 10.0 * Eigen::VectorXd::Ones(getStateSize());
 }
 
 EmulatorControlInterface::~EmulatorControlInterface() {

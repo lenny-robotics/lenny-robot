@@ -13,7 +13,7 @@ ControlApp::ControlApp() : gui::Application("ControlApp") {
 void ControlApp::setTrajectory() {
     trajectory.clear();
     trajectory.addEntry(0.0, initialRobotState);
-    trajectory.addEntry((double)numSteps * getDt(), robot.base->getStateFromTransformation(targetBasePose));
+    trajectory.addEntry((double)numSteps * getDt(), finalRobotState);
 }
 
 void ControlApp::restart() {
@@ -50,6 +50,7 @@ void ControlApp::drawGui() {
     }
 
     robot.drawGui(true);
+    robot.drawFKGui(finalRobotState, "Final Robot State");
     rci.drawGui();
     btt.drawGui();
 
@@ -81,13 +82,6 @@ void ControlApp::drawGui() {
 
             ImGui::TreePop();
         }
-    }
-
-    ImGui::SetNextItemOpen(true);
-    if (ImGui::TreeNode("ImGuizmo")) {
-        static Eigen::Vector3d scale = Eigen::Vector3d::Ones();
-        ImGuizmo::useWidget(targetBasePose.position, targetBasePose.orientation, scale, camera.getViewMatrix(), camera.getProjectionMatrix());
-        ImGui::TreePop();
     }
 
     ImGui::End();

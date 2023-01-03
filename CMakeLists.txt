@@ -13,7 +13,6 @@ option(${LENNY_PROJECT}_BUILD_APPS "Build apps" ON)
 
 # Project folder path
 set(LENNY_PROJECT_FOLDER "\"${CMAKE_CURRENT_LIST_DIR}\"" CACHE STRING "")
-set(LENNY_ROBOT_FOLDER "\"${CMAKE_CURRENT_LIST_DIR}\"" CACHE STRING "")
 
 # Generate log directory
 file(MAKE_DIRECTORY "logs")

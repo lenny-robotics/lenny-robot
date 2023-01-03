@@ -1,4 +1,4 @@
-project(ControlApp)
+project(RAPTApp)
 
 file(GLOB sources
         ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
@@ -8,8 +8,8 @@ file(GLOB sources
 add_executable(${PROJECT_NAME} ${sources})
 
 target_link_libraries(${PROJECT_NAME}
-        PUBLIC lenny::control
         PUBLIC lenny::gui
+        PUBLIC lenny::rapt
         )
 
 target_include_directories(${PROJECT_NAME}

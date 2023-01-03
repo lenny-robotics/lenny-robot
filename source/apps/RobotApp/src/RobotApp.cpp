@@ -33,7 +33,7 @@ void RobotApp::drawGui() {
 }
 
 void RobotApp::mouseMoveCallback(double xPos, double yPos) {
-    //rayIntersection = robot.getFirstLinkHitByRay(state, camera.getRayFromScreenCoordinates(xPos, yPos), robot.showVisuals, robot.showSkeleton);
+    rayIntersection = robot.getFirstLinkHitByRay(state, camera.getRayFromScreenCoordinates(xPos, yPos), robot.showVisuals, robot.showSkeleton);
     gui::Application::mouseMoveCallback(xPos, yPos);
 }
 
