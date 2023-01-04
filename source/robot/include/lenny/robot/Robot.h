@@ -1,6 +1,7 @@
 #pragma once
 
 #include <lenny/robot/Base.h>
+#include <lenny/robot/EndEffector.h>
 #include <lenny/robot/Joint.h>
 #include <lenny/robot/Link.h>
 #include <lenny/tools/FiniteDifference.h>
@@ -66,7 +67,7 @@ public:
     void computeGlobalLinkPoses(LinkPoses& globalLinkPoses, const Eigen::VectorXd& state) const;
 
     //--- Drawing
-    void drawScene(const Eigen::VectorXd& state) const;
+    void drawScene(const Eigen::VectorXd& state, const std::map<std::string, Eigen::VectorXd>& endEffectorStates) const;
     enum class DRAWING_FLAGS : std::uint8_t {
         SHOW_NONE = 0b00000000,
         SHOW_SKELETON = 0b00000001,
@@ -75,8 +76,10 @@ public:
         SHOW_JOINT_LIMITS = 0b00001000,
         SHOW_VISUALS = 0b00010000
     };
-    void drawScene(const Eigen::VectorXd& state, const DRAWING_FLAGS& flags, const double& visualAlpha, const double& infoAlpha) const;
-    void drawVisuals(const Eigen::VectorXd& state, const std::optional<Eigen::Vector3d>& color, const double& alpha) const;
+    void drawScene(const Eigen::VectorXd& state, const std::map<std::string, Eigen::VectorXd>& endEffectorStates, const DRAWING_FLAGS& flags,
+                   const double& visualAlpha, const double& infoAlpha) const;
+    void drawVisuals(const Eigen::VectorXd& state, const std::map<std::string, Eigen::VectorXd>& endEffectorStates, const std::optional<Eigen::Vector3d>& color,
+                     const double& alpha) const;
     void drawSkeleton(const Eigen::VectorXd& state, const double& radius, const Eigen::Vector4d& linkColor, const Eigen::Vector4d& jointColor) const;
 
     //--- Gui
@@ -84,8 +87,8 @@ public:
     bool drawFKGui(Eigen::VectorXd& state, const char* label) const;
 
     //--- Interaction ([linkName, globalIntersectionPoint]
-    std::optional<std::pair<std::string, Eigen::Vector3d>> getFirstLinkHitByRay(const Eigen::VectorXd& state, const Ray& ray, const bool& checkVisuals,
-                                                                                const bool& checkSkeleton) const;
+    std::optional<std::pair<std::string, Eigen::Vector3d>> getFirstLinkHitByRay(const Eigen::VectorXd& state, const Ray& ray) const;
+
     //--- Save & load
     bool saveStateToFile(const Eigen::VectorXd& state, const std::string& filePath) const;
     std::optional<Eigen::VectorXd> loadStateFromFile(const char* filePath) const;
@@ -107,24 +110,20 @@ protected:
     void drawCoordinateFrames(const LinkPoses& globalLinkPoses) const;
     void drawJointAxes(const LinkPoses& globalLinkPoses) const;
     void drawJointLimits(const Eigen::VectorXd& state, const LinkPoses& globalLinkPoses) const;
-    void drawVisuals(const LinkPoses& globalLinkPoses, const std::optional<Eigen::Vector3d>& color, const double& alpha) const;
-
-    //--- Interaction
-    std::optional<Eigen::Vector3d> getGlobalIntersectionPointForLink(const LinkPoses& globalLinkPoses, const std::string& linkName, const Ray& ray,
-                                                                     const bool& checkVisuals, const bool& checkSkeleton) const;
+    void drawVisuals(const LinkPoses& globalLinkPoses, const std::map<std::string, Eigen::VectorXd>& endEffectorStates,
+                     const std::optional<Eigen::Vector3d>& color, const double& alpha) const;
 
 public:
-    //Strings
+    //--- Info
     std::string name;                             //Name of the robot
     const std::string filePath;                   //Store file path
     const tools::Model::F_loadModel f_loadModel;  //Store model load function
 
-    //Lists
+    //--- Members
+    Base::UPtr base;
     std::map<std::string, Link> links;
     std::map<std::string, Joint> joints;
-
-    //Base
-    Base::UPtr base;
+    std::map<std::string, EndEffector::UPtr> endEffectors;
 
     //--- Drawing
     double skeletonRadius = 0.01;
@@ -136,6 +135,7 @@ public:
     bool showJointAxes = false;
     bool showJointLimits = false;
     bool showVisuals = true;
+    bool showGraspLocations = false;
 
 protected:
     typedef std::pair<std::optional<std::string>, std::vector<std::string>> ParentToChildrenJoints;  //[parent, children]

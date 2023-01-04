@@ -1,0 +1,51 @@
+#include <lenny/robot/EndEffector.h>
+#include <lenny/tools/Gui.h>
+#include <lenny/tools/Renderer.h>
+
+namespace lenny::robot {
+
+EndEffector::EndEffector(const std::string& linkName, const tools::Transformation& localGraspTrafo) : linkName(linkName), localGraspTrafo(localGraspTrafo) {}
+
+uint EndEffector::getStateSize() const {
+    return 0;
+}
+
+void EndEffector::checkState(const Eigen::VectorXd& state) const {
+    if (state.size() != getStateSize())
+        LENNY_LOG_ERROR("Invalid state input (Size: %d VS %d", state.size(), getStateSize())
+}
+
+void EndEffector::drawScene(const Eigen::VectorXd& state, const tools::Transformation& globalLinkPose, const std::optional<Eigen::Vector3d>& color,
+                            const double& alpha, const bool& showGraspLocation) const {
+    checkState(state);
+
+    for (const auto& visual : visuals) {
+        const std::optional<Eigen::Vector3d> col = color.has_value() ? color : visual.color;
+        visual.drawScene(globalLinkPose, col, alpha);
+    }
+
+    if (showGraspLocation)
+        drawGraspLocation(globalLinkPose);
+}
+
+void EndEffector::drawGraspLocation(const tools::Transformation& globalLinkPose) const {
+    const tools::Transformation gripLocation = globalLinkPose * localGraspTrafo;
+    tools::Renderer::I->drawCoordinateSystem(gripLocation.position, gripLocation.orientation, 0.05, 0.005);
+}
+
+void EndEffector::drawGui(const std::string& description) {
+    using tools::Gui;
+    if (Gui::I->TreeNode(description.c_str())) {
+        Gui::I->Text("Link: %s", linkName.c_str());
+        Gui::I->Input("Local Grasp Trafo", localGraspTrafo);
+
+        for (uint iter = 0; robot::Visual & visual : visuals)
+            visual.drawGui(("Visual - " + std::to_string(iter++)).c_str());
+
+        drawAdditionalGuiContent();
+
+        Gui::I->TreePop();
+    }
+}
+
+}  // namespace lenny::robot
