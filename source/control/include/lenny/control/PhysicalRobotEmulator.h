@@ -4,7 +4,7 @@
 
 #include <thread>
 
-namespace lenny {
+namespace lenny::control {
 
 class PhysicalRobotEmulator {
 public:
@@ -45,4 +45,4 @@ protected:
     bool sendCommands = false;
 };
 
-}  // namespace lenny
+}  // namespace lenny::control

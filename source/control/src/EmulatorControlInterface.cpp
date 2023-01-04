@@ -1,8 +1,7 @@
-#include "EmulatorControlInterface.h"
-
+#include <lenny/control/EmulatorControlInterface.h>
 #include <lenny/tools/Gui.h>
 
-namespace lenny {
+namespace lenny::control {
 
 EmulatorControlInterface::EmulatorControlInterface(const robot::Robot& robot, const Eigen::VectorXb& dofMask, const tools::Plot<PlotType>::F_addPlot f_addPlot)
     : control::RobotControlInterface(robot, dofMask, f_addPlot), emulator(currentPosition) {
@@ -52,4 +51,4 @@ void EmulatorControlInterface::drawAdditionalGuiContent() {
         Gui::I->Slider("Noise Factor", emulator.noiseFactor, 0.0, 0.01, "%.6f");
     }
 }
-}  // namespace lenny
+}  // namespace lenny::control

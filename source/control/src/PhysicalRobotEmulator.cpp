@@ -1,12 +1,11 @@
-#include "PhysicalRobotEmulator.h"
-
+#include <lenny/control/EmulatorControlInterface.h>
 #include <lenny/tools/Logger.h>
 #include <lenny/tools/Timer.h>
 #include <lenny/tools/Trajectory.h>
 
 #include <random>
 
-namespace lenny {
+namespace lenny::control {
 
 PhysicalRobotEmulator::PhysicalRobotEmulator(const Eigen::VectorXd& initialState) : currentState(initialState), targetState(initialState) {}
 
@@ -119,4 +118,4 @@ void PhysicalRobotEmulator::applyControlThread() {
     LENNY_LOG_INFO("Control thread terminated");
 }
 
-}  // namespace lenny
+}  // namespace lenny::control

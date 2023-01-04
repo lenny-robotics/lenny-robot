@@ -1,10 +1,9 @@
 #pragma once
 
+#include <lenny/control/PhysicalRobotEmulator.h>
 #include <lenny/control/RobotControlInterface.h>
 
-#include "PhysicalRobotEmulator.h"
-
-namespace lenny {
+namespace lenny::control {
 
 class EmulatorControlInterface : public control::RobotControlInterface {
 public:
@@ -27,4 +26,4 @@ private:
     PhysicalRobotEmulator emulator;
 };
 
-}  // namespace lenny
+}  // namespace lenny::control
