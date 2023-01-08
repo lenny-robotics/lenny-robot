@@ -125,7 +125,7 @@ public:
     Base::UPtr base;
     std::map<std::string, Link> links;
     std::map<std::string, Joint> joints;
-    std::map<std::string, EndEffector::SPtr> endEffectors;
+    std::map<std::string, EndEffector> endEffectors;
 
     //--- Drawing
     double skeletonRadius = 0.01;

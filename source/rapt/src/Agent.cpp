@@ -17,8 +17,8 @@ Agent::Agent(const std::string& name, const robot::Robot& robot, const Eigen::Ve
     initialRobotVelocity = Eigen::VectorXd::Zero(robot.getStateSize());
     generateSelfCollisionLinkMap(1);
     for (const auto& [eeName, ee] : robot.endEffectors) {
-        if (ee->stateSize == 1)
-            grippers.insert({eeName, Gripper(ee)});
+        if (ee.stateSize == 1)
+            grippers.insert({eeName, Gripper()});
         else
             LENNY_LOG_WARNING("EndEffector `%s` cannot become a gripper...", eeName.c_str())
     }
@@ -584,7 +584,7 @@ void Agent::convertRobotTensorToAgentTensor(Eigen::TensorD& agentTensor, const E
 }
 
 void Agent::drawRobot(const Eigen::VectorXd& agentState) const {
-    const Eigen::VectorXd robotState = getRobotStateFromAgentState(agentState);
+    //Collect drawing flags
     using DRAWING_FLAGS = robot::Robot::DRAWING_FLAGS;
     DRAWING_FLAGS flags = DRAWING_FLAGS::SHOW_NONE;
     if (showSkeleton)
@@ -602,13 +602,20 @@ void Agent::drawRobot(const Eigen::VectorXd& agentState) const {
 
     //Collect end-effector states from grippers
     std::map<std::string, Eigen::VectorXd> endEffectorStates;
-    for (const auto& [gripperName, gripper] : grippers) {
-        gripper.updateFingerPercentage();
-        Eigen::VectorXd state(1);
-        state << gripper.getCurrentFingerPercentage();
-        endEffectorStates.insert({gripperName, state});
+    for (const auto& [eeName, ee] : robot.endEffectors) {
+        if (grippers.find(eeName) != grippers.end()) {
+            const Gripper& gripper = grippers.at(eeName);
+            gripper.updateFingerPercentage();
+            Eigen::VectorXd state(1);
+            state << gripper.getCurrentFingerPercentage();
+            endEffectorStates.insert({eeName, state});
+        } else {
+            endEffectorStates.insert({eeName, Eigen::VectorXd::Zero(ee.stateSize)});
+        }
     }
 
+    //Draw
+    const Eigen::VectorXd robotState = getRobotStateFromAgentState(agentState);
     robot.drawScene(robotState, endEffectorStates, flags, visualAlpha, infoAlpha);
 }
 

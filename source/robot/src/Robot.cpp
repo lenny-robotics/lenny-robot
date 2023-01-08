@@ -590,7 +590,7 @@ void Robot::drawGui(const bool withDrawingOptions) {
 
         if (Gui::I->TreeNode("EndEffectors")) {
             for (auto& [name, endEffector] : endEffectors)
-                endEffector->drawGui(name);
+                endEffector.drawGui(name);
             Gui::I->TreePop();
         }
 
@@ -690,11 +690,11 @@ std::optional<std::pair<std::string, Eigen::Vector3d>> Robot::getFirstLinkHitByR
 
     //Loop over endeffectors
     for (const auto& [endEffectorName, endEffector] : endEffectors) {
-        const auto& globalLinkPose = globalLinkPoses.at(endEffector->linkName);
-        for (const auto& visual : endEffector->visuals) {
+        const auto& globalLinkPose = globalLinkPoses.at(endEffector.linkName);
+        for (const auto& visual : endEffector.visuals) {
             const auto linkIntersectionPoint = getGlobalIntersectionPointForVisual(visual, globalLinkPose);
             if (linkIntersectionPoint.has_value())
-                info = {endEffector->linkName, linkIntersectionPoint.value()};
+                info = {endEffector.linkName, linkIntersectionPoint.value()};
         }
     }
     return info;
@@ -1085,16 +1085,16 @@ void Robot::drawVisuals(const LinkPoses& globalLinkPoses, const std::map<std::st
 
     for (const auto& [eeName, ee] : endEffectors) {
         const Eigen::VectorXd eeState =
-            (endEffectorStates.find(eeName) != endEffectorStates.end()) ? endEffectorStates.at(eeName) : Eigen::VectorXd::Zero(ee->stateSize);
-        checkLinkName(ee->linkName);
-        ee->drawScene(eeState, globalLinkPoses.at(ee->linkName), color, alpha);
+            (endEffectorStates.find(eeName) != endEffectorStates.end()) ? endEffectorStates.at(eeName) : Eigen::VectorXd::Zero(ee.stateSize);
+        checkLinkName(ee.linkName);
+        ee.drawScene(eeState, globalLinkPoses.at(ee.linkName), color, alpha);
     }
 }
 
 void Robot::drawGraspLocations(const LinkPoses& globalLinkPoses) const {
     for (const auto& [eeName, ee] : endEffectors) {
-        checkLinkName(ee->linkName);
-        ee->drawGraspLocation(globalLinkPoses.at(ee->linkName));
+        checkLinkName(ee.linkName);
+        ee.drawGraspLocation(globalLinkPoses.at(ee.linkName));
     }
 }
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lenny/robot/EndEffector.h>
 #include <lenny/tools/Timer.h>
 
 namespace lenny::rapt {
@@ -8,7 +7,7 @@ namespace lenny::rapt {
 class Gripper {
 public:
     //--- Constructor
-    Gripper(const robot::EndEffector::CSPtr endEffector);
+    Gripper() = default;
     ~Gripper() = default;
 
     //--- Helpers
@@ -22,7 +21,6 @@ public:
     void drawGui(const std::string& description);
 
 public:
-    const robot::EndEffector::CSPtr endEffector;
     double fingerVelocity = 1.5;  //percentage per second
 
 private:

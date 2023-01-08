@@ -3,8 +3,6 @@
 
 namespace lenny::rapt {
 
-Gripper::Gripper(const robot::EndEffector::CSPtr endEffector) : endEffector(endEffector) {}
-
 void Gripper::close() {
     setTargetFingerPercentage(0.0);
 }

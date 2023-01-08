@@ -35,8 +35,10 @@ Visual::Visual(const std::string& filePath, const tools::Model::F_loadModel& f_l
 }
 
 void Visual::drawScene(const tools::Transformation& globalPose, const std::optional<Eigen::Vector3d>& color, const double& alpha) const {
-    const tools::Transformation modelPose = globalPose * localTrafo;
-    model->draw(modelPose.position, modelPose.orientation, scale, color, alpha);
+    if (model) {
+        const tools::Transformation modelPose = globalPose * localTrafo;
+        model->draw(modelPose.position, modelPose.orientation, scale, color, alpha);
+    }
 }
 
 void Visual::drawGui(const std::string& description) {

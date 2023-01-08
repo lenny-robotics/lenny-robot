@@ -5,7 +5,15 @@
 namespace lenny::robot {
 
 EndEffector::EndEffector(const std::string& linkName, const uint& stateSize, const tools::Transformation& localGraspTrafo)
-    : linkName(linkName), stateSize(stateSize), localGraspTrafo(localGraspTrafo) {}
+    : linkName(linkName), stateSize(stateSize), localGraspTrafo(localGraspTrafo) {
+    f_drawVisuals = [](const std::vector<robot::Visual>& visuals, const Eigen::VectorXd& state, const tools::Transformation& globalLinkPose,
+                       const std::optional<Eigen::Vector3d>& color, const double& alpha) -> void {
+        for (const auto& visual : visuals) {
+            const std::optional<Eigen::Vector3d> col = color.has_value() ? color : visual.color;
+            visual.drawScene(globalLinkPose, col, alpha);
+        }
+    };
+}
 
 void EndEffector::checkState(const Eigen::VectorXd& state) const {
     if (state.size() != stateSize)
@@ -14,10 +22,9 @@ void EndEffector::checkState(const Eigen::VectorXd& state) const {
 
 void EndEffector::drawScene(const Eigen::VectorXd& state, const tools::Transformation& globalLinkPose, const std::optional<Eigen::Vector3d>& color,
                             const double& alpha) const {
-    for (const auto& visual : visuals) {
-        const std::optional<Eigen::Vector3d> col = color.has_value() ? color : visual.color;
-        visual.drawScene(globalLinkPose, col, alpha);
-    }
+    checkState(state);
+    if (f_drawVisuals)
+        f_drawVisuals(visuals, state, globalLinkPose, color, alpha);
 }
 
 void EndEffector::drawGraspLocation(const tools::Transformation& globalLinkPose) const {
@@ -34,7 +41,8 @@ void EndEffector::drawGui(const std::string& description) {
         for (uint iter = 0; robot::Visual & visual : visuals)
             visual.drawGui(("Visual - " + std::to_string(iter++)).c_str());
 
-        drawAdditionalGuiContent();
+        if (f_drawAdditionalGuiContent)
+            f_drawAdditionalGuiContent();
 
         Gui::I->TreePop();
     }
