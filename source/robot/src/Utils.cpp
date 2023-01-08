@@ -23,8 +23,22 @@ void drawLimitsGui(const std::string& description, Limits& limits) {
     }
 }
 
-Visual::Visual(const std::string& filePath) : filePath(filePath) {
-    model = std::make_unique<tools::Model>("dummy");
+//----------------------------------------------------------------------------------------------------------------------------------------
+
+Visual::Visual(const std::string& filePath, const tools::Model::F_loadModel& f_loadModel, const tools::Transformation& localTrafo, const Eigen::Vector3d& scale,
+               const std::optional<Eigen::Vector3d>& color)
+    : filePath(filePath), localTrafo(localTrafo), scale(scale), color(color) {
+    if (f_loadModel)
+        f_loadModel(model, filePath);
+    else
+        model = std::make_unique<tools::Model>(filePath);
+}
+
+void Visual::drawScene(const tools::Transformation& globalPose, const std::optional<Eigen::Vector3d>& color, const double& alpha) const {
+    if (model) {
+        const tools::Transformation modelPose = globalPose * localTrafo;
+        model->draw(modelPose.position, modelPose.orientation, scale, color, alpha);
+    }
 }
 
 void Visual::drawGui(const std::string& description) {

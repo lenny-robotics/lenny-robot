@@ -16,6 +16,12 @@ Agent::Agent(const std::string& name, const robot::Robot& robot, const Eigen::Ve
     setInitialRobotStateFromRobotState(initialRobotState);
     initialRobotVelocity = Eigen::VectorXd::Zero(robot.getStateSize());
     generateSelfCollisionLinkMap(1);
+    for (const auto& [eeName, ee] : robot.endEffectors) {
+        if (ee.stateSize == 1)
+            grippers.insert({eeName, Gripper()});
+        else
+            LENNY_LOG_WARNING("EndEffector `%s` cannot become a gripper...", eeName.c_str())
+    }
 }
 
 uint Agent::getStateSize() const {
@@ -303,8 +309,6 @@ void Agent::drawScene(const MotionTrajectory& trajectory, const double& currentT
 void Agent::drawScene(const Eigen::VectorXd& agentState) const {
     checkState(agentState);
     drawRobot(agentState);
-    if (showGrippers)
-        drawGrippers(agentState);
     if (showCollisionPrimitives)
         drawCollisionPrimitives(agentState);
 }
@@ -315,9 +319,8 @@ void Agent::drawGui(const bool withDrawingOptions) {
         robot.drawFKGui(initialRobotState, "Initial Robot State");
 
         if (Gui::I->TreeNode("Grippers")) {
-            for (auto& gripper : grippers)
-                gripper->drawGui();
-
+            for (auto& [gripperName, gripper] : grippers)
+                gripper.drawGui(gripperName);
             Gui::I->TreePop();
         }
 
@@ -397,7 +400,7 @@ void Agent::drawGui(const bool withDrawingOptions) {
             Gui::I->Checkbox("Show Joint Axes", showJointAxes);
             Gui::I->Checkbox("Show Joint Limits", showJointLimits);
             Gui::I->Checkbox("Show Visuals", showVisuals);
-            Gui::I->Checkbox("Show Grippers", showGrippers);
+            Gui::I->Checkbox("Show Grasp Locations", showGraspLocations);
             Gui::I->Checkbox("Show Collision Primitives", showCollisionPrimitives);
 
             Gui::I->Slider("Info Alpha", infoAlpha, 0.0, 1.0);
@@ -581,7 +584,7 @@ void Agent::convertRobotTensorToAgentTensor(Eigen::TensorD& agentTensor, const E
 }
 
 void Agent::drawRobot(const Eigen::VectorXd& agentState) const {
-    const Eigen::VectorXd robotState = getRobotStateFromAgentState(agentState);
+    //Collect drawing flags
     using DRAWING_FLAGS = robot::Robot::DRAWING_FLAGS;
     DRAWING_FLAGS flags = DRAWING_FLAGS::SHOW_NONE;
     if (showSkeleton)
@@ -594,12 +597,26 @@ void Agent::drawRobot(const Eigen::VectorXd& agentState) const {
         flags |= DRAWING_FLAGS::SHOW_COORDINATE_FRAMES;
     if (showVisuals)
         flags |= DRAWING_FLAGS::SHOW_VISUALS;
-    robot.drawScene(robotState, flags, visualAlpha, infoAlpha);
-}
+    if (showGraspLocations)
+        flags |= DRAWING_FLAGS::SHOW_GRASP_LOCATIONS;
 
-void Agent::drawGrippers(const Eigen::VectorXd& agentState) const {
-    for (const auto& gripper : grippers)
-        gripper->drawScene(computeGlobalPose(agentState, tools::Transformation(), gripper->linkName), visualAlpha);
+    //Collect end-effector states from grippers
+    std::map<std::string, Eigen::VectorXd> endEffectorStates;
+    for (const auto& [eeName, ee] : robot.endEffectors) {
+        if (grippers.find(eeName) != grippers.end()) {
+            const Gripper& gripper = grippers.at(eeName);
+            gripper.updateFingerPercentage();
+            Eigen::VectorXd state(1);
+            state << gripper.getCurrentFingerPercentage();
+            endEffectorStates.insert({eeName, state});
+        } else {
+            endEffectorStates.insert({eeName, Eigen::VectorXd::Zero(ee.stateSize)});
+        }
+    }
+
+    //Draw
+    const Eigen::VectorXd robotState = getRobotStateFromAgentState(agentState);
+    robot.drawScene(robotState, endEffectorStates, flags, visualAlpha, infoAlpha);
 }
 
 void Agent::drawCollisionPrimitives(const Eigen::VectorXd& agentState) const {

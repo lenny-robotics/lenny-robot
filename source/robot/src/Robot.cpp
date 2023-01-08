@@ -155,32 +155,21 @@ void Robot::loadFromFile() {
                 if (urdfVisual.geometry.has_value()) {
                     //Only consider meshes
                     auto mesh = [&](const urdf::Mesh& mesh) {
-                        //Extract path
-                        const std::string visualPath = mesh.filePath.substr(mesh.filePath.find("/meshes/"));
-
-                        //Add to list of corresponding link
-                        robotLink.visuals.push_back(modelPath + visualPath);
-                        robot::Visual& robotVisual = robotLink.visuals.back();
-
-                        //Load model
-                        if (f_loadModel)
-                            f_loadModel(robotVisual.model, robotVisual.filePath);
-
-                        //Set transformation
-                        const tools::Transformation localTrafo =
+                        //Extract information
+                        const std::string filePath = modelPath + mesh.filePath.substr(mesh.filePath.find("/meshes/"));
+                        const tools::Transformation origin =
                             (urdfVisual.origin.has_value() ? transform_to_trafo(urdfVisual.origin.value()) : tools::Transformation());
-                        robotVisual.localTrafo.position = localTrafo.position;
-                        robotVisual.localTrafo.orientation = globalTrafo.inverse().getLocalCoordinates(localTrafo.orientation);
-
-                        //Set scale
-                        robotVisual.scale = vector3_to_vector3d(mesh.scale);
-
-                        //Set color
+                        const tools::Transformation localTrafo(origin.position, globalTrafo.inverse().getLocalCoordinates(origin.orientation));
+                        const Eigen::Vector3d scale = vector3_to_vector3d(mesh.scale);
+                        std::optional<Eigen::Vector3d> color = std::nullopt;
                         if (urdfVisual.material_name.has_value()) {
                             const urdf::Material& material = material_by_name(urdfVisual.material_name.value());
                             if (material.color.has_value())
-                                robotVisual.color = Eigen::Vector3d(material.color->r, material.color->g, material.color->b);
+                                color = Eigen::Vector3d(material.color->r, material.color->g, material.color->b);
                         }
+
+                        //Add to list
+                        robotLink.visuals.emplace_back(filePath, f_loadModel, localTrafo, scale, color);
                     };
                     auto others = [&](const auto& other) { LENNY_LOG_WARNING("Only mesh visuals are considered for now") };
                     std::visit(overloaded{mesh, others}, urdfVisual.geometry.value());
@@ -529,7 +518,7 @@ void Robot::computeGlobalLinkPoses(LinkPoses& globalLinkPoses, const Eigen::Vect
     setPoses(setPoses, base->linkName);
 }
 
-void Robot::drawScene(const Eigen::VectorXd& state) const {
+void Robot::drawScene(const Eigen::VectorXd& state, const std::map<std::string, Eigen::VectorXd>& endEffectorStates) const {
     DRAWING_FLAGS flags = DRAWING_FLAGS::SHOW_NONE;
     if (showSkeleton)
         flags |= DRAWING_FLAGS::SHOW_SKELETON;
@@ -541,10 +530,13 @@ void Robot::drawScene(const Eigen::VectorXd& state) const {
         flags |= DRAWING_FLAGS::SHOW_COORDINATE_FRAMES;
     if (showVisuals)
         flags |= DRAWING_FLAGS::SHOW_VISUALS;
-    drawScene(state, flags, visualAlpha, infoAlpha);
+    if (showGraspLocations)
+        flags |= DRAWING_FLAGS::SHOW_GRASP_LOCATIONS;
+    drawScene(state, endEffectorStates, flags, visualAlpha, infoAlpha);
 }
 
-void Robot::drawScene(const Eigen::VectorXd& state, const DRAWING_FLAGS& flags, const double& visualAlpha, const double& infoAlpha) const {
+void Robot::drawScene(const Eigen::VectorXd& state, const std::map<std::string, Eigen::VectorXd>& endEffectorStates, const DRAWING_FLAGS& flags,
+                      const double& visualAlpha, const double& infoAlpha) const {
     LinkPoses globalLinkPoses;
     computeGlobalLinkPoses(globalLinkPoses, state);
 
@@ -561,13 +553,16 @@ void Robot::drawScene(const Eigen::VectorXd& state, const DRAWING_FLAGS& flags, 
     if (flags & DRAWING_FLAGS::SHOW_COORDINATE_FRAMES)
         drawCoordinateFrames(globalLinkPoses);
     if (flags & DRAWING_FLAGS::SHOW_VISUALS)
-        drawVisuals(globalLinkPoses, std::nullopt, visualAlpha);
+        drawVisuals(globalLinkPoses, endEffectorStates, std::nullopt, visualAlpha);
+    if (flags & DRAWING_FLAGS::SHOW_GRASP_LOCATIONS)
+        drawGraspLocations(globalLinkPoses);
 }
 
-void Robot::drawVisuals(const Eigen::VectorXd& state, const std::optional<Eigen::Vector3d>& color, const double& alpha) const {
+void Robot::drawVisuals(const Eigen::VectorXd& state, const std::map<std::string, Eigen::VectorXd>& endEffectorStates,
+                        const std::optional<Eigen::Vector3d>& color, const double& alpha) const {
     LinkPoses globalLinkPoses;
     computeGlobalLinkPoses(globalLinkPoses, state);
-    drawVisuals(globalLinkPoses, color, alpha);
+    drawVisuals(globalLinkPoses, endEffectorStates, color, alpha);
 }
 
 void Robot::drawSkeleton(const Eigen::VectorXd& state, const double& radius, const Eigen::Vector4d& linkColor, const Eigen::Vector4d& jointColor) const {
@@ -593,6 +588,12 @@ void Robot::drawGui(const bool withDrawingOptions) {
             Gui::I->TreePop();
         }
 
+        if (Gui::I->TreeNode("EndEffectors")) {
+            for (auto& [name, endEffector] : endEffectors)
+                endEffector.drawGui(name);
+            Gui::I->TreePop();
+        }
+
         if (withDrawingOptions) {
             if (Gui::I->TreeNode("Drawing")) {
                 Gui::I->Checkbox("Show Skeleton", showSkeleton);
@@ -600,6 +601,7 @@ void Robot::drawGui(const bool withDrawingOptions) {
                 Gui::I->Checkbox("Show Joint Axes", showJointAxes);
                 Gui::I->Checkbox("Show Joint Limits", showJointLimits);
                 Gui::I->Checkbox("Show Visuals", showVisuals);
+                Gui::I->Checkbox("Show Grasp Locations", showGraspLocations);
 
                 Gui::I->Slider("Info Alpha", infoAlpha, 0.0, 1.0);
                 Gui::I->Slider("Visual Alpha", visualAlpha, 0.0, 1.0);
@@ -659,25 +661,40 @@ bool Robot::drawFKGui(Eigen::VectorXd& state, const char* label) const {
     return triggered;
 }
 
-std::optional<std::pair<std::string, Eigen::Vector3d>> Robot::getFirstLinkHitByRay(const Eigen::VectorXd& state, const Ray& ray, const bool& checkVisuals,
-                                                                                   const bool& checkSkeleton) const {
-    //Compute global link poses
+std::optional<std::pair<std::string, Eigen::Vector3d>> Robot::getFirstLinkHitByRay(const Eigen::VectorXd& state, const Ray& ray) const {
+    double t = HUGE_VALF;
+    auto getGlobalIntersectionPointForVisual = [&](const Visual& visual, const tools::Transformation& globalLinkPose) -> std::optional<Eigen::Vector3d> {
+        std::optional<Eigen::Vector3d> globalIntersectionPoint = std::nullopt;
+        const tools::Transformation visualPose = globalLinkPose * visual.localTrafo;
+        const std::optional<tools::Model::HitInfo> hitInfo = visual.model->hitByRay(visualPose.position, visualPose.orientation, visual.scale, ray);
+        if (hitInfo.has_value() && hitInfo->t < t) {
+            t = hitInfo->t;
+            globalIntersectionPoint = ray.origin + ray.direction * hitInfo->t;
+        }
+        return globalIntersectionPoint;
+    };
+
     LinkPoses globalLinkPoses;
     computeGlobalLinkPoses(globalLinkPoses, state);
-
-    //Initialize
-    double t = HUGE_VALF;
     std::optional<std::pair<std::string, Eigen::Vector3d>> info = std::nullopt;
 
     //Loop over links
     for (const auto& [linkName, link] : links) {
-        const auto linkIntersectionPoint = getGlobalIntersectionPointForLink(globalLinkPoses, linkName, ray, checkVisuals, checkSkeleton);
-        if (linkIntersectionPoint.has_value()) {
-            const double t_test = ray.direction.dot(linkIntersectionPoint.value() - ray.origin);
-            if (t_test < t) {
-                t = t_test;
+        const auto& globalLinkPose = globalLinkPoses.at(linkName);
+        for (const auto& visual : link.visuals) {
+            const auto linkIntersectionPoint = getGlobalIntersectionPointForVisual(visual, globalLinkPose);
+            if (linkIntersectionPoint.has_value())
                 info = {linkName, linkIntersectionPoint.value()};
-            }
+        }
+    }
+
+    //Loop over endeffectors
+    for (const auto& [endEffectorName, endEffector] : endEffectors) {
+        const auto& globalLinkPose = globalLinkPoses.at(endEffector.linkName);
+        for (const auto& visual : endEffector.visuals) {
+            const auto linkIntersectionPoint = getGlobalIntersectionPointForVisual(visual, globalLinkPose);
+            if (linkIntersectionPoint.has_value())
+                info = {endEffector.linkName, linkIntersectionPoint.value()};
         }
     }
     return info;
@@ -1057,130 +1074,28 @@ void Robot::drawJointLimits(const Eigen::VectorXd& state, const LinkPoses& globa
     }
 }
 
-void Robot::drawVisuals(const LinkPoses& globalLinkPoses, const std::optional<Eigen::Vector3d>& color, const double& alpha) const {
+void Robot::drawVisuals(const LinkPoses& globalLinkPoses, const std::map<std::string, Eigen::VectorXd>& endEffectorStates,
+                        const std::optional<Eigen::Vector3d>& color, const double& alpha) const {
     for (const auto& [linkName, link] : this->links) {
         for (const auto& visual : link.visuals) {
-            const tools::Transformation visualPose = globalLinkPoses.at(linkName) * visual.localTrafo;
             const std::optional<Eigen::Vector3d> col = color.has_value() ? color : visual.color;
-            visual.model->draw(visualPose.position, visualPose.orientation, visual.scale, col, alpha);
+            visual.drawScene(globalLinkPoses.at(linkName), col, alpha);
         }
+    }
+
+    for (const auto& [eeName, ee] : endEffectors) {
+        const Eigen::VectorXd eeState =
+            (endEffectorStates.find(eeName) != endEffectorStates.end()) ? endEffectorStates.at(eeName) : Eigen::VectorXd::Zero(ee.stateSize);
+        checkLinkName(ee.linkName);
+        ee.drawScene(eeState, globalLinkPoses.at(ee.linkName), color, alpha);
     }
 }
 
-//[distance, closesPointOnRay]
-inline std::pair<double, Eigen::Vector3d> getDistanceToLineSegment(const Ray& ray, const std::pair<Eigen::Vector3d, Eigen::Vector3d>& cylinderPoints) {
-    // (c) Dan Sunday, http://geomalgorithms.com/a07-_distance.html
-    const auto& [p1, p2] = cylinderPoints;
-    const double factor = 10000.0;
-
-    Eigen::Vector3d u = (ray.origin - p1) + ray.direction * factor;
-    Eigen::Vector3d v = p2 - p1;
-    Eigen::Vector3d w = ray.origin - p1;
-
-    double a = u.squaredNorm();
-    double b = u.dot(v);
-    double c = v.squaredNorm();
-    double d = u.dot(w);
-    double e = v.dot(w);
-    double denom = a * c - b * b;
-
-    double sN, sD = denom;
-    double tN, tD = denom;
-
-    if (denom < (1.0 / factor)) {
-        //Lines are almost parallel
-        sN = 0.0;
-        sD = 1.0;
-        tN = e;
-        tD = c;
-    } else {
-        sN = (b * e - c * d);
-        tN = (a * e - b * d);
-        if (sN < 0.0) {
-            //Closest point is behind the ray's starting point
-            sN = 0.0;
-            tN = e;
-            tD = c;
-        }
+void Robot::drawGraspLocations(const LinkPoses& globalLinkPoses) const {
+    for (const auto& [eeName, ee] : endEffectors) {
+        checkLinkName(ee.linkName);
+        ee.drawGraspLocation(globalLinkPoses.at(ee.linkName));
     }
-
-    if (tN < 0.0) {
-        //Closest point is behind t1
-        tN = 0.0;
-        if (-d < 0.0)
-            sN = 0.0;
-        else if (-d > a)
-            sN = sD;
-        else {
-            sN = -d;
-            sD = a;
-        }
-    } else if (tN > tD) {
-        //Closest point is behind t2
-        tN = tD;
-        if ((-d + b) < 0.0)
-            sN = 0.0;
-        else if ((-d + b) > a)
-            sN = sD;
-        else {
-            sN = -d + b;
-            sD = a;
-        }
-    }
-
-    double sc = (abs(sN) < (1.0 / factor)) ? 0 : sN / sD;
-    double tc = (abs(tN) < (1.0 / factor)) ? 0 : tN / tD;
-
-    return {(w + u * sc - v * tc).norm(), ray.origin + ray.direction * (sc * factor)};
-}
-
-//[distance]
-inline std::optional<double> getCylinderRayDistance(const Ray& ray, const std::pair<Eigen::Vector3d, Eigen::Vector3d>& cylinderPoints,
-                                                    const double& cylinderRadius) {
-    const auto& [distance, closesPointOnRay] = getDistanceToLineSegment(ray, cylinderPoints);
-    if (distance < cylinderRadius)
-        return ray.direction.dot(closesPointOnRay - ray.origin);
-    return std::nullopt;
-}
-
-std::optional<Eigen::Vector3d> Robot::getGlobalIntersectionPointForLink(const LinkPoses& globalLinkPoses, const std::string& linkName, const Ray& ray,
-                                                                        const bool& checkVisuals, const bool& checkSkeleton) const {
-    //Initialize
-    double t = HUGE_VALF;
-    std::optional<Eigen::Vector3d> globalIntersectionPoint = std::nullopt;
-
-    //Check visuals
-    if (checkVisuals) {
-        for (const Visual& visual : links.at(linkName).visuals) {
-            const tools::Transformation visualPose = globalLinkPoses.at(linkName) * visual.localTrafo;
-            const std::optional<tools::Model::HitInfo> hitInfo = visual.model->hitByRay(visualPose.position, visualPose.orientation, visual.scale, ray);
-            if (hitInfo.has_value() && hitInfo->t < t) {
-                t = hitInfo->t;
-                globalIntersectionPoint = ray.origin + ray.direction * hitInfo->t;
-            }
-        }
-    }
-
-    //Check skeleton
-    if (checkSkeleton) {
-        auto hitSkeleton = [&](const std::pair<Eigen::Vector3d, Eigen::Vector3d>& cylinderPoints) -> void {
-            const std::optional<double> t_test = getCylinderRayDistance(ray, cylinderPoints, skeletonRadius);
-            if (t_test.has_value() && t_test.value() < t) {
-                t = t_test.value();
-                globalIntersectionPoint = ray.origin + ray.direction * t_test.value();
-            }
-        };
-
-        const auto& [jointParentName, jointChildNames] = this->linkToJoints.at(linkName);
-        for (const std::string& jointChildName : jointChildNames) {
-            const Joint& joint = joints.at(jointChildName);
-            const Eigen::Vector3d parentPosition = globalLinkPoses.at(joint.parentName).position;
-            const Eigen::Vector3d childPosition = globalLinkPoses.at(joint.childName).position;
-            hitSkeleton({parentPosition, childPosition});
-        }
-    }
-
-    return globalIntersectionPoint;
 }
 
 }  // namespace lenny::robot

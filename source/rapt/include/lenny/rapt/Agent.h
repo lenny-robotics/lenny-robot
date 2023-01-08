@@ -115,7 +115,6 @@ protected:
 
     //--- Drawing
     void drawRobot(const Eigen::VectorXd& agentState) const;
-    void drawGrippers(const Eigen::VectorXd& agentState) const;
     void drawCollisionPrimitives(const Eigen::VectorXd& agentState) const;
     virtual void drawAdditionalGuiContent() {}
 
@@ -123,7 +122,7 @@ public:
     //--- Public members
     const std::string name;
     const robot::Robot& robot;
-    std::vector<Gripper::UPtr> grippers;
+    std::unordered_map<std::string, rapt::Gripper> grippers;                                       //[description, gripper]
     std::unordered_map<std::string, std::vector<collision::Primitive::SPtr>> collisionPrimitives;  //[linkName, primitives]
     std::unordered_map<std::string, std::vector<std::string>> selfCollisionLinkMap;                //[linkName, linkNames]
     tools::Transformation localBaseTrafo = tools::Transformation();                                //For base constraints
@@ -137,7 +136,7 @@ public:
     bool showJointAxes = false;
     bool showJointLimits = false;
     bool showVisuals = true;
-    bool showGrippers = true;
+    bool showGraspLocations = false;
     bool showCollisionPrimitives = false;
 
 protected:
