@@ -1,23 +1,15 @@
 #pragma once
 
-#include <lenny/control/BasicTrajectoryTracker.h>
-#include <lenny/control/EmulatorControlInterface.h>
 #include <lenny/gui/Application.h>
 #include <lenny/gui/Model.h>
-#include <lenny/gui/Plot.h>
+#include <lenny/rapt/Agent.h>
 
 namespace lenny {
 
-class ControlApp : public gui::Application {
+class AgentApp : public gui::Application {
 public:
-    ControlApp();
-    ~ControlApp() = default;
-
-    void setTrajectory();
-
-    //--- Process
-    void restart() override;
-    void process() override;
+    AgentApp();
+    ~AgentApp() = default;
 
     //--- Drawing
     void drawScene() const override;
@@ -29,7 +21,7 @@ public:
         Robot() : robot::Robot(LENNY_ROBOT_APP_FOLDER "/config/ur_5e/robot.urdf", gui::Model::f_loadModel) {
             endEffectors.insert(
                 {"Gripper", std::make_shared<robot::EndEffector>(
-                                "wrist_3_link", 0,
+                                "wrist_3_link", 1,
                                 tools::Transformation(Eigen::Vector3d(0.0, 0.0, -0.250), tools::utils::rotX(PI / 2.0) * tools::utils::rotY(-PI / 2.0)))});
             endEffectors.at("Gripper")->visuals.emplace_back(
                 LENNY_ROBOT_APP_FOLDER "/config/robotiq_gripper/Gripper.obj", gui::Model::f_loadModel,
@@ -37,14 +29,12 @@ public:
                 std::nullopt);
         }
     } robot;
-    Eigen::VectorXd initialRobotState = robot.loadStateFromFile(LENNY_ROBOT_APP_FOLDER "/config/ur_5e/default_state.json").value();
-    Eigen::VectorXd finalRobotState = initialRobotState;
-    control::EmulatorControlInterface rci = control::EmulatorControlInterface(robot, Eigen::VectorXb::Ones(robot.getStateSize()),
-                                                                              gui::Plot<control::EmulatorControlInterface::PlotType>::f_addPlot);
-    control::BasicTrajectoryTracker btt = control::BasicTrajectoryTracker(rci);
-    tools::TrajectoryXd trajectory;
-    uint numSteps = 60;
-    bool isRecedingHorizon = false;
+    std::function<Eigen::VectorXb()> getDofMask = [&]() -> Eigen::VectorXb {
+        Eigen::VectorXb dofMask = Eigen::VectorXb::Ones(robot.getStateSize());
+        dofMask.segment(0, 6).setZero();
+        return dofMask;
+    };
+    rapt::Agent agent = rapt::Agent("Agent", robot, robot.loadStateFromFile(LENNY_ROBOT_APP_FOLDER "/config/ur_5e/default_state.json").value(), getDofMask());
 };
 
 }  // namespace lenny

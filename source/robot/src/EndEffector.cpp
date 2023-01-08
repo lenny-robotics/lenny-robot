@@ -4,28 +4,20 @@
 
 namespace lenny::robot {
 
-EndEffector::EndEffector(const std::string& linkName, const tools::Transformation& localGraspTrafo) : linkName(linkName), localGraspTrafo(localGraspTrafo) {}
-
-uint EndEffector::getStateSize() const {
-    return 0;
-}
+EndEffector::EndEffector(const std::string& linkName, const uint& stateSize, const tools::Transformation& localGraspTrafo)
+    : linkName(linkName), stateSize(stateSize), localGraspTrafo(localGraspTrafo) {}
 
 void EndEffector::checkState(const Eigen::VectorXd& state) const {
-    if (state.size() != getStateSize())
-        LENNY_LOG_ERROR("Invalid state input (Size: %d VS %d", state.size(), getStateSize())
+    if (state.size() != stateSize)
+        LENNY_LOG_ERROR("Invalid state input (Size: %d VS %d)", state.size(), stateSize)
 }
 
 void EndEffector::drawScene(const Eigen::VectorXd& state, const tools::Transformation& globalLinkPose, const std::optional<Eigen::Vector3d>& color,
-                            const double& alpha, const bool& showGraspLocation) const {
-    checkState(state);
-
+                            const double& alpha) const {
     for (const auto& visual : visuals) {
         const std::optional<Eigen::Vector3d> col = color.has_value() ? color : visual.color;
         visual.drawScene(globalLinkPose, col, alpha);
     }
-
-    if (showGraspLocation)
-        drawGraspLocation(globalLinkPose);
 }
 
 void EndEffector::drawGraspLocation(const tools::Transformation& globalLinkPose) const {

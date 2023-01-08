@@ -74,7 +74,8 @@ public:
         SHOW_COORDINATE_FRAMES = 0b00000010,
         SHOW_JOINT_AXES = 0b00000100,
         SHOW_JOINT_LIMITS = 0b00001000,
-        SHOW_VISUALS = 0b00010000
+        SHOW_VISUALS = 0b00010000,
+        SHOW_GRASP_LOCATIONS = 0b00100000
     };
     void drawScene(const Eigen::VectorXd& state, const std::map<std::string, Eigen::VectorXd>& endEffectorStates, const DRAWING_FLAGS& flags,
                    const double& visualAlpha, const double& infoAlpha) const;
@@ -112,6 +113,7 @@ protected:
     void drawJointLimits(const Eigen::VectorXd& state, const LinkPoses& globalLinkPoses) const;
     void drawVisuals(const LinkPoses& globalLinkPoses, const std::map<std::string, Eigen::VectorXd>& endEffectorStates,
                      const std::optional<Eigen::Vector3d>& color, const double& alpha) const;
+    void drawGraspLocations(const LinkPoses& globalLinkPoses) const;
 
 public:
     //--- Info
@@ -123,7 +125,7 @@ public:
     Base::UPtr base;
     std::map<std::string, Link> links;
     std::map<std::string, Joint> joints;
-    std::map<std::string, EndEffector::UPtr> endEffectors;
+    std::map<std::string, EndEffector::SPtr> endEffectors;
 
     //--- Drawing
     double skeletonRadius = 0.01;

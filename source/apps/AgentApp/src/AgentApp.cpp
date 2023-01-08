@@ -1,19 +1,19 @@
-#include "RAPTApp.h"
+#include "AgentApp.h"
 
 #include <lenny/gui/ImGui.h>
 
 namespace lenny {
 
-RAPTApp::RAPTApp() : gui::Application("RAPTApp") {
+AgentApp::AgentApp() : gui::Application("AgentApp") {
     showOrigin = false;
     showGround = false;
 }
 
-void RAPTApp::drawScene() const {
+void AgentApp::drawScene() const {
     agent.drawScene(agent.getInitialAgentState());
 }
 
-void RAPTApp::drawGui() {
+void AgentApp::drawGui() {
     gui::Application::drawGui();
 
     ImGui::Begin("Main Menu");

@@ -30,11 +30,11 @@ void ControlApp::process() {
 }
 
 void ControlApp::drawScene() const {
-    robot.drawScene(initialRobotState);
+    robot.drawScene(initialRobotState, {});
     rci.drawScene();
-    for (uint i = 0; i < numSteps; i++) {
+    for (uint i = 0; i < numSteps; i += 5) {
         const double time = (double)i * getDt();
-        robot.drawVisuals(trajectory.getLinearInterpolation(time), Eigen::Vector3d(0.75, 0.75, 0.75), 0.5);
+        robot.drawVisuals(trajectory.getLinearInterpolation(time), {}, Eigen::Vector3d(0.75, 0.75, 0.75), 0.5);
     }
 }
 

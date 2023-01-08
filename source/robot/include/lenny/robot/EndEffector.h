@@ -11,25 +11,25 @@ public:
     LENNY_GENERAGE_TYPEDEFS(EndEffector)
 
     //--- Constructor
-    EndEffector(const std::string& linkName, const tools::Transformation& localGraspTrafo);
+    EndEffector(const std::string& linkName, const uint& stateSize, const tools::Transformation& localGraspTrafo);
     virtual ~EndEffector() = default;
 
     //--- Helpers
-    virtual uint getStateSize() const;
     void checkState(const Eigen::VectorXd& state) const;
 
     //--- Drawing
     virtual void drawScene(const Eigen::VectorXd& state, const tools::Transformation& globalLinkPose, const std::optional<Eigen::Vector3d>& color,
-                           const double& alpha, const bool& showGraspLocation) const;
+                           const double& alpha) const;
+    void drawGraspLocation(const tools::Transformation& globalLinkPose) const;
     void drawGui(const std::string& description);
 
 protected:
-    void drawGraspLocation(const tools::Transformation& globalLinkPose) const;
     virtual void drawAdditionalGuiContent() {}
 
 public:
     //--- Members
     const std::string linkName;
+    const uint stateSize;
     tools::Transformation localGraspTrafo;
     std::vector<robot::Visual> visuals;
 };

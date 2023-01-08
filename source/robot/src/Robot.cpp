@@ -530,6 +530,8 @@ void Robot::drawScene(const Eigen::VectorXd& state, const std::map<std::string, 
         flags |= DRAWING_FLAGS::SHOW_COORDINATE_FRAMES;
     if (showVisuals)
         flags |= DRAWING_FLAGS::SHOW_VISUALS;
+    if (showGraspLocations)
+        flags |= DRAWING_FLAGS::SHOW_GRASP_LOCATIONS;
     drawScene(state, endEffectorStates, flags, visualAlpha, infoAlpha);
 }
 
@@ -552,6 +554,8 @@ void Robot::drawScene(const Eigen::VectorXd& state, const std::map<std::string, 
         drawCoordinateFrames(globalLinkPoses);
     if (flags & DRAWING_FLAGS::SHOW_VISUALS)
         drawVisuals(globalLinkPoses, endEffectorStates, std::nullopt, visualAlpha);
+    if (flags & DRAWING_FLAGS::SHOW_GRASP_LOCATIONS)
+        drawGraspLocations(globalLinkPoses);
 }
 
 void Robot::drawVisuals(const Eigen::VectorXd& state, const std::map<std::string, Eigen::VectorXd>& endEffectorStates,
@@ -1079,12 +1083,18 @@ void Robot::drawVisuals(const LinkPoses& globalLinkPoses, const std::map<std::st
         }
     }
 
-    for (const auto& [eeName, eeState] : endEffectorStates) {
-        if (endEffectors.find(eeName) == endEffectors.end())
-            LENNY_LOG_ERROR("EndEffector with name `%s` does not exist in robot `%s`", eeName.c_str(), name.c_str())
-        const EndEffector::UPtr& ee = endEffectors.at(eeName);
+    for (const auto& [eeName, ee] : endEffectors) {
+        const Eigen::VectorXd eeState =
+            (endEffectorStates.find(eeName) != endEffectorStates.end()) ? endEffectorStates.at(eeName) : Eigen::VectorXd::Zero(ee->stateSize);
         checkLinkName(ee->linkName);
-        ee->drawScene(eeState, globalLinkPoses.at(ee->linkName), color, alpha, showGraspLocations);
+        ee->drawScene(eeState, globalLinkPoses.at(ee->linkName), color, alpha);
+    }
+}
+
+void Robot::drawGraspLocations(const LinkPoses& globalLinkPoses) const {
+    for (const auto& [eeName, ee] : endEffectors) {
+        checkLinkName(ee->linkName);
+        ee->drawGraspLocation(globalLinkPoses.at(ee->linkName));
     }
 }
 

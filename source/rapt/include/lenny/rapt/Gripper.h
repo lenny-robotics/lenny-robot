@@ -1,43 +1,28 @@
 #pragma once
 
-#include <lenny/robot/Robot.h>
+#include <lenny/robot/EndEffector.h>
 #include <lenny/tools/Timer.h>
-#include <lenny/tools/Typedefs.h>
 
 namespace lenny::rapt {
 
 class Gripper {
 public:
-    //--- Typedefs
-    LENNY_GENERAGE_TYPEDEFS(Gripper)
-
     //--- Constructor
-    Gripper(const robot::Robot& robot, const std::string& linkName, const tools::Transformation& localTrafo, const std::string& description = "Gripper");
-    virtual ~Gripper() = default;
+    Gripper(const robot::EndEffector::CSPtr endEffector);
+    ~Gripper() = default;
 
     //--- Helpers
     void close();
     void open();
-    void setFingerPosition(const double& fingerPercentage);
-    double getFingerPosition() const;
+    void setTargetFingerPercentage(const double& newTargetFingerPercentage);
+    double getCurrentFingerPercentage() const;
+    void updateFingerPercentage() const;
 
     //--- Drawing
-    virtual void drawScene(const tools::Transformation& globalLinkPose, const double& alpha) const;
-    void drawGui();
-
-protected:
-    virtual void drawAdditionalGuiContent() {}
-
-private:
-    void updateCurrentFingerPercentage() const;
+    void drawGui(const std::string& description);
 
 public:
-    //--- Members
-    const std::string description;
-    const std::string linkName;
-    tools::Transformation localTrafo;  //Local transformation to gripper fingers
-    std::vector<robot::Visual> visuals;
-    bool showGripLocation = false;
+    const robot::EndEffector::CSPtr endEffector;
     double fingerVelocity = 1.5;  //percentage per second
 
 private:
