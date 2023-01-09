@@ -1,0 +1,1 @@
+This lib is heavily inspired by: https://github.com/ORB-HD/URDF_Parser

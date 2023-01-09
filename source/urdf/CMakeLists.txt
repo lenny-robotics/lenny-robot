@@ -1,4 +1,8 @@
-project(urdf) #Heavily inspired by: https://github.com/ORB-HD/URDF_Parser
+# External
+add_subdirectory(external)
+
+# Project
+project(urdf)
 
 file(GLOB sources
         ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
