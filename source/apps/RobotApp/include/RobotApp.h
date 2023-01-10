@@ -1,8 +1,8 @@
 #pragma once
 
 #include <lenny/gui/Application.h>
-#include <lenny/gui/Model.h>
-#include <lenny/robot/Robot.h>
+
+#include "TestRobot.h"
 
 namespace lenny {
 
@@ -19,8 +19,8 @@ public:
     void mouseMoveCallback(double xPos, double yPos) override;
 
 public:
-    robot::Robot robot = robot::Robot(LENNY_ROBOT_FOLDER "/data/abb_yumi/robot.urdf", gui::Model::f_loadModel);
-    Eigen::VectorXd state = Eigen::VectorXd::Zero(robot.getStateSize());
+    TestRobot robot;
+    Eigen::VectorXd state = robot.getInitialState();
     std::optional<std::pair<std::string, Eigen::Vector3d>> rayIntersection = std::nullopt;
 };
 

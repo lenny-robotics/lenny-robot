@@ -13,7 +13,7 @@ ControlApp::ControlApp() : gui::Application("ControlApp") {
 void ControlApp::setTrajectory() {
     trajectory.clear();
     trajectory.addEntry(0.0, initialRobotState);
-    trajectory.addEntry((double)numSteps * getDt(), robot.base->getStateFromTransformation(targetBasePose));
+    trajectory.addEntry((double)numSteps * getDt(), finalRobotState);
 }
 
 void ControlApp::restart() {
@@ -30,11 +30,11 @@ void ControlApp::process() {
 }
 
 void ControlApp::drawScene() const {
-    robot.drawScene(initialRobotState);
+    robot.drawScene(initialRobotState, {});
     rci.drawScene();
-    for (uint i = 0; i < numSteps; i++) {
+    for (uint i = 0; i < numSteps; i += 5) {
         const double time = (double)i * getDt();
-        robot.drawVisuals(trajectory.getLinearInterpolation(time), Eigen::Vector3d(0.75, 0.75, 0.75), 0.5);
+        robot.drawVisuals(trajectory.getLinearInterpolation(time), {}, Eigen::Vector3d(0.75, 0.75, 0.75), 0.5);
     }
 }
 
@@ -50,6 +50,7 @@ void ControlApp::drawGui() {
     }
 
     robot.drawGui(true);
+    robot.drawFKGui(finalRobotState, "Final Robot State");
     rci.drawGui();
     btt.drawGui();
 
@@ -81,13 +82,6 @@ void ControlApp::drawGui() {
 
             ImGui::TreePop();
         }
-    }
-
-    ImGui::SetNextItemOpen(true);
-    if (ImGui::TreeNode("ImGuizmo")) {
-        static Eigen::Vector3d scale = Eigen::Vector3d::Ones();
-        ImGuizmo::useWidget(targetBasePose.position, targetBasePose.orientation, scale, camera.getViewMatrix(), camera.getProjectionMatrix());
-        ImGui::TreePop();
     }
 
     ImGui::End();

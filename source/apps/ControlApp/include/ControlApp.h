@@ -1,11 +1,11 @@
 #pragma once
 
 #include <lenny/control/BasicTrajectoryTracker.h>
+#include <lenny/control/EmulatorControlInterface.h>
 #include <lenny/gui/Application.h>
-#include <lenny/gui/Model.h>
 #include <lenny/gui/Plot.h>
 
-#include "EmulatorControlInterface.h"
+#include "TestRobot.h"
 
 namespace lenny {
 
@@ -25,14 +25,14 @@ public:
     void drawGui() override;
 
 public:
-    robot::Robot robot = robot::Robot(LENNY_ROBOT_FOLDER "/data/floating_base/robot.urdf", gui::Model::f_loadModel);
-    Eigen::VectorXd initialRobotState = Eigen::VectorXd::Zero(robot.getStateSize());
-    EmulatorControlInterface rci =
-        EmulatorControlInterface(robot, Eigen::VectorXb::Ones(robot.getStateSize()), gui::Plot<EmulatorControlInterface::PlotType>::f_addPlot);
+    TestRobot robot;
+    Eigen::VectorXd initialRobotState = robot.getInitialState();
+    Eigen::VectorXd finalRobotState = initialRobotState;
+    control::EmulatorControlInterface rci = control::EmulatorControlInterface(robot, Eigen::VectorXb::Ones(robot.getStateSize()),
+                                                                              gui::Plot<control::EmulatorControlInterface::PlotType>::f_addPlot);
     control::BasicTrajectoryTracker btt = control::BasicTrajectoryTracker(rci);
-    tools::Transformation targetBasePose;
     tools::TrajectoryXd trajectory;
-    uint numSteps = 100;
+    uint numSteps = 60;
     bool isRecedingHorizon = false;
 };
 

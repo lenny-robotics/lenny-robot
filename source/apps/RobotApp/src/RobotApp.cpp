@@ -12,7 +12,7 @@ RobotApp::RobotApp() : gui::Application("RobotApp") {
 }
 
 void RobotApp::drawScene() const {
-    robot.drawScene(state);
+    robot.drawScene(state, {});
 
     if (rayIntersection.has_value()) {
         const auto& [linkName, globalIntersectionPoint] = rayIntersection.value();
@@ -33,7 +33,7 @@ void RobotApp::drawGui() {
 }
 
 void RobotApp::mouseMoveCallback(double xPos, double yPos) {
-    //rayIntersection = robot.getFirstLinkHitByRay(state, camera.getRayFromScreenCoordinates(xPos, yPos), robot.showVisuals, robot.showSkeleton);
+    rayIntersection = robot.getFirstLinkHitByRay(state, camera.getRayFromScreenCoordinates(xPos, yPos));
     gui::Application::mouseMoveCallback(xPos, yPos);
 }
 

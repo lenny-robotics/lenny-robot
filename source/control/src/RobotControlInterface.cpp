@@ -134,19 +134,20 @@ void RobotControlInterface::drawScene(double alpha) const {
     if (!isConnected())
         return;
 
+    //ToDo: End-effectors...
     if (showCurrentRobot && readCommands) {
         const Eigen::VectorXd robotState = getRobotStateFromControlState(currentPosition, fullTargetState);
-        robot.drawVisuals(robotState, currentDrawColor, alpha);
+        robot.drawVisuals(robotState, {}, currentDrawColor, alpha);
     }
 
     if (showTargetRobot && sendCommands) {
         const Eigen::VectorXd robotState = getRobotStateFromControlState(targetPosition, fullTargetState);
-        robot.drawVisuals(robotState, targetDrawColor, alpha);
+        robot.drawVisuals(robotState, {}, targetDrawColor, alpha);
     }
 
     if (showCommandRobot && sendCommands) {
         const Eigen::VectorXd robotState = getRobotStateFromControlState(commandPosition, fullTargetState);
-        robot.drawVisuals(robotState, commandDrawColor, alpha);
+        robot.drawVisuals(robotState, {}, commandDrawColor, alpha);
     }
 }
 
