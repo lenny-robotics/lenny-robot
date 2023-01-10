@@ -89,6 +89,7 @@ public:
     //--- Drawing
     virtual void drawScene(const MotionTrajectory& trajectory, const double& currentTime, const bool& isRecedingHorizon) const;
     virtual void drawScene(const Eigen::VectorXd& agentState) const;
+    void drawVisuals(const Eigen::VectorXd& agentState, const std::optional<Eigen::Vector3d>& color, const double& alpha) const;
     void drawGui(const bool withDrawingOptions = false);
 
     //--- Collision primitives
@@ -112,6 +113,7 @@ protected:
     //--- Protected helpers
     void convertRobotJacobianToAgentJacobian(Eigen::MatrixXd& agentJacobian, const Eigen::MatrixXd& robotJacobian) const;
     void convertRobotTensorToAgentTensor(Eigen::TensorD& agentTensor, const Eigen::TensorD& robotTensor) const;
+    void collectEndEffectorStatesFromGripper(std::map<std::string, Eigen::VectorXd>& endEffectorStates) const;
 
     //--- Drawing
     void drawRobot(const Eigen::VectorXd& agentState) const;

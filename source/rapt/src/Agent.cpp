@@ -313,6 +313,13 @@ void Agent::drawScene(const Eigen::VectorXd& agentState) const {
         drawCollisionPrimitives(agentState);
 }
 
+void Agent::drawVisuals(const Eigen::VectorXd& agentState, const std::optional<Eigen::Vector3d>& color, const double& alpha) const {
+    std::map<std::string, Eigen::VectorXd> endEffectorStates;
+    collectEndEffectorStatesFromGripper(endEffectorStates);
+    const Eigen::VectorXd robotState = getRobotStateFromAgentState(agentState);
+    robot.drawVisuals(robotState, endEffectorStates, color, alpha);
+}
+
 void Agent::drawGui(const bool withDrawingOptions) {
     using tools::Gui;
     if (Gui::I->TreeNode(std::string("Agent - `" + name + "`").c_str())) {
@@ -583,6 +590,21 @@ void Agent::convertRobotTensorToAgentTensor(Eigen::TensorD& agentTensor, const E
     }
 }
 
+void Agent::collectEndEffectorStatesFromGripper(std::map<std::string, Eigen::VectorXd>& endEffectorStates) const {
+    endEffectorStates.clear();
+    for (const auto& [eeName, ee] : robot.endEffectors) {
+        if (grippers.find(eeName) != grippers.end()) {
+            const Gripper& gripper = grippers.at(eeName);
+            gripper.updateFingerPercentage();
+            Eigen::VectorXd state(1);
+            state << gripper.getCurrentFingerPercentage();
+            endEffectorStates.insert({eeName, state});
+        } else {
+            endEffectorStates.insert({eeName, Eigen::VectorXd::Zero(ee.stateSize)});
+        }
+    }
+}
+
 void Agent::drawRobot(const Eigen::VectorXd& agentState) const {
     //Collect drawing flags
     using DRAWING_FLAGS = robot::Robot::DRAWING_FLAGS;
@@ -602,17 +624,7 @@ void Agent::drawRobot(const Eigen::VectorXd& agentState) const {
 
     //Collect end-effector states from grippers
     std::map<std::string, Eigen::VectorXd> endEffectorStates;
-    for (const auto& [eeName, ee] : robot.endEffectors) {
-        if (grippers.find(eeName) != grippers.end()) {
-            const Gripper& gripper = grippers.at(eeName);
-            gripper.updateFingerPercentage();
-            Eigen::VectorXd state(1);
-            state << gripper.getCurrentFingerPercentage();
-            endEffectorStates.insert({eeName, state});
-        } else {
-            endEffectorStates.insert({eeName, Eigen::VectorXd::Zero(ee.stateSize)});
-        }
-    }
+    collectEndEffectorStatesFromGripper(endEffectorStates);
 
     //Draw
     const Eigen::VectorXd robotState = getRobotStateFromAgentState(agentState);
