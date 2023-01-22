@@ -12,11 +12,23 @@ void Base::drawGui() {
     using tools::Gui;
     if (Gui::I->TreeNode("Base")) {
         Gui::I->Text("Link: %s", linkName.c_str());
-        for (int i = 0; i < 6; i++)
-            drawLimitsGui(("Position Limits - " + std::string(dofNames[i])).c_str(), posLimitsList.at(i));
+        if (Gui::I->TreeNode("Position Limits")) {
+            for (int i = 0; i < 6; i++)
+                drawLimitsGui(std::string(dofNames[i]).c_str(), posLimitsList.at(i));
+            Gui::I->TreePop();
+        }
 
-        for (int i = 0; i < 6; i++)
-            drawLimitsGui(("Velocity Limits - " + std::string(dofNames[i])).c_str(), posLimitsList.at(i));
+        if (Gui::I->TreeNode("Velocity Limits")) {
+            for (int i = 0; i < 6; i++)
+                drawLimitsGui(std::string(dofNames[i]).c_str(), velLimitsList.at(i));
+            Gui::I->TreePop();
+        }
+
+        if (Gui::I->TreeNode("Acceleration Limits")) {
+            for (int i = 0; i < 6; i++)
+                drawLimitsGui(std::string(dofNames[i]).c_str(), accLimitsList.at(i));
+            Gui::I->TreePop();
+        }
 
         if (Gui::I->Button("Save limits to file"))
             saveLimitsToFile(LENNY_PROJECT_FOLDER "/logs/RobotBaseLimits-" + tools::utils::getCurrentDateAndTime() + ".json");
@@ -58,6 +70,7 @@ bool Base::saveLimitsToFile(const std::string& filePath) const {
     };
     saveToFile(posLimitsList, "PoseLimits");
     saveToFile(velLimitsList, "VelocityLimits");
+    saveToFile(accLimitsList, "AccelerationLimits");
 
     //Stream to file
     file << std::setw(2) << js << std::endl;
@@ -95,6 +108,7 @@ bool Base::loadLimitsFromFile(const char* fP) {
     for (int i = 0; i < 6; i++) {
         posLimitsList[i] = std::nullopt;
         velLimitsList[i] = std::nullopt;
+        accLimitsList[i] = std::nullopt;
     }
 
     //Load limits
@@ -115,6 +129,8 @@ bool Base::loadLimitsFromFile(const char* fP) {
             loadFromFile(posLimitsList, j_element);
         else if (j_element.contains("VelocityLimits"))
             loadFromFile(velLimitsList, j_element);
+        else if (j_element.contains("AccelerationLimits"))
+            loadFromFile(accLimitsList, j_element);
         else
             LENNY_LOG_ERROR("Unknown element `%s`", j_element.dump().c_str())
     }

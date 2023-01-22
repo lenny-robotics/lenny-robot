@@ -118,8 +118,12 @@ void Robot::loadFromFile() {
                 robotJoint.angleLimits = {urdfJoint.limits->lower.value(), urdfJoint.limits->upper.value()};
 
             //Velocity limits
-            if (urdfJoint.limits->velocity)
+            if (urdfJoint.limits->velocity.has_value())
                 robotJoint.velLimits = {-urdfJoint.limits->velocity.value(), urdfJoint.limits->velocity.value()};
+
+            //Acceleration limits
+            if (urdfJoint.limits->acceleration.has_value())
+                robotJoint.accLimits = {-urdfJoint.limits->acceleration.value(), urdfJoint.limits->acceleration.value()};
         }
     }
 
@@ -261,6 +265,8 @@ const Limits& Robot::getLimitsForDofIndex(const uint& dofIndex, const LIMITS_TYP
             return base->posLimitsList[dofIndex];
         else if (limitsType == VELOCITY)
             return base->velLimitsList[dofIndex];
+        else if (limitsType == ACCELERATION)
+            return base->accLimitsList[dofIndex];
     } else {  //Joints
         auto jIter = joints.begin();
         std::advance(jIter, dofIndex - 6);
@@ -268,6 +274,8 @@ const Limits& Robot::getLimitsForDofIndex(const uint& dofIndex, const LIMITS_TYP
             return jIter->second.angleLimits;
         else if (limitsType == VELOCITY)
             return jIter->second.velLimits;
+        else if (limitsType == ACCELERATION)
+            return jIter->second.accLimits;
     }
     return base->posLimitsList[0];  //Dummy
 }

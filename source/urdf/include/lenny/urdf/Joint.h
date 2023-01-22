@@ -16,7 +16,7 @@ public:
     };
 
     struct Limits {
-        std::optional<double> lower = std::nullopt, upper = std::nullopt, effort = std::nullopt, velocity = std::nullopt;
+        std::optional<double> lower = std::nullopt, upper = std::nullopt, effort = std::nullopt, velocity = std::nullopt, acceleration = std::nullopt;
 
         static Limits parseFromXmlElement(tinyxml2::XMLElement* xmlElement);
     };
@@ -75,6 +75,7 @@ inline std::ostream& operator<<(std::ostream& out, const Joint::Limits& l) {
     Utils::print(out, l.upper, "\t\tupper");
     Utils::print(out, l.effort, "\t\teffort");
     Utils::print(out, l.velocity, "\t\tvelocity");
+    Utils::print(out, l.acceleration, "\t\tacceleration");
     return out;
 }
 

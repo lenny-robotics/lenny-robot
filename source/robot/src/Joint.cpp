@@ -15,6 +15,7 @@ void Joint::drawGui(const std::string& name) {
 
         drawLimitsGui("Angle Limits", angleLimits);
         drawLimitsGui("Velocity Limits", velLimits);
+        drawLimitsGui("Acceleration Limits", accLimits);
 
         Gui::I->TreePop();
     }
