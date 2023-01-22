@@ -67,6 +67,11 @@ public:
     Eigen::QuaternionD computeLocalOrientation(const Eigen::VectorXd& agentState, const Eigen::QuaternionD& q_global, const std::string& linkName) const;
     tools::Transformation computeLocalPose(const Eigen::VectorXd& agentState, const tools::Transformation& t_global, const std::string& linkName) const;
 
+    //--- Estimation helpers
+    Eigen::VectorXd estimateAgentVelocity(const Eigen::VectorXd& currentAgentState, const Eigen::VectorXd& previousAgentState, const double& dt) const;
+    Eigen::VectorXd estimateAgentAcceleration(const Eigen::VectorXd& currentAgentState, const Eigen::VectorXd& previousAgentState,
+                                              const Eigen::VectorXd& oldAgentState, const double& dt) const;
+
     //--- Animation helpers
     class MotionTrajectory {
     public:

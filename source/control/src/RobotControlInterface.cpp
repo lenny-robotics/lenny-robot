@@ -101,35 +101,6 @@ bool RobotControlInterface::positionReached(const Eigen::VectorXd& currentRobotP
     return true;
 }
 
-inline double estimateAngularVelocity(double angle1, double angle0, const double& dt) {
-    double diff = angle1 - angle0;
-    while (diff > PI)
-        diff -= PI;
-    while (diff < -PI)
-        diff += PI;
-    if (diff >= PI || diff <= -PI)
-        LENNY_LOG_ERROR("Something is still wrong with the difference: %lf - %lf = %lf", angle1, angle0, diff)
-    return diff / dt;
-}
-
-Eigen::VectorXd RobotControlInterface::estimateRobotVelocity(const Eigen::VectorXd& position1, const Eigen::VectorXd& position0, const double& dt) const {
-    const int size = robot.getStateSize();
-    if (position1.size() != size || position0.size() != size || dt < 1e-6)
-        LENNY_LOG_ERROR("Invalid input(s)")
-
-    int iter = 0;
-    Eigen::VectorXd velocity(size);
-    for (int i = 0; i < size; i++) {
-        if (i < 3)
-            velocity[iter] = (position1[iter] - position0[iter]) / dt;
-        else
-            velocity[iter] = estimateAngularVelocity(position1[iter], position0[iter], dt);
-
-        iter++;
-    }
-    return velocity;
-}
-
 void RobotControlInterface::drawScene(double alpha) const {
     if (!isConnected())
         return;
@@ -323,7 +294,7 @@ Eigen::VectorXd RobotControlInterface::estimateControlVelocity(const Eigen::Vect
         if (i < 3)
             velocity[iter] = (position1[iter] - position0[iter]) / dt;
         else
-            velocity[iter] = estimateAngularVelocity(position1[iter], position0[iter], dt);
+            velocity[iter] = robot::Robot::estimateAngularVelocity(position1[iter], position0[iter], dt);
 
         iter++;
     }

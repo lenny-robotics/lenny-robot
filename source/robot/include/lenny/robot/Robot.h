@@ -66,6 +66,12 @@ public:
     typedef std::map<std::string, tools::Transformation> LinkPoses;
     void computeGlobalLinkPoses(LinkPoses& globalLinkPoses, const Eigen::VectorXd& state) const;
 
+    //--- Estimates
+    static double estimateAngularVelocity(const double& currentAngle, const double& previousAngle, const double& dt);
+    Eigen::VectorXd estimateVelocity(const Eigen::VectorXd& currentState, const Eigen::VectorXd& previousState, const double& dt) const;
+    Eigen::VectorXd estimateAcceleration(const Eigen::VectorXd& currentState, const Eigen::VectorXd& previousState, const Eigen::VectorXd& oldState,
+                                         const double& dt) const;
+
     //--- Drawing
     void drawScene(const Eigen::VectorXd& state, const std::map<std::string, Eigen::VectorXd>& endEffectorStates) const;
     enum class DRAWING_FLAGS : std::uint8_t {

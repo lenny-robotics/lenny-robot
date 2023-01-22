@@ -31,7 +31,6 @@ public:
 
     //--- Helpers
     bool positionReached(const Eigen::VectorXd& currentRobotPosition, const Eigen::VectorXd& targetRobotPosition) const;
-    Eigen::VectorXd estimateRobotVelocity(const Eigen::VectorXd& position1, const Eigen::VectorXd& position0, const double& dt) const;
 
     //--- Drawing
     void drawScene(double alpha = 0.5) const;

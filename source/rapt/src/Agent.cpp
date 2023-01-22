@@ -253,6 +253,38 @@ tools::Transformation Agent::computeLocalPose(const Eigen::VectorXd& agentState,
     return robot.computeLocalPose(robotState, t_global, linkName);
 }
 
+Eigen::VectorXd Agent::estimateAgentVelocity(const Eigen::VectorXd& currentAgentState, const Eigen::VectorXd& previousAgentState, const double& dt) const {
+    //Check inputs
+    checkState(currentAgentState);
+    checkState(previousAgentState);
+    const int size = getStateSize();
+    if (dt < 1e-6)
+        LENNY_LOG_ERROR("Invalid input for dt: '%lf'", dt)
+
+    //Estimate velocity
+    int iter = 0;
+    Eigen::VectorXd velocity(size);
+    for (int i = 0; i < dofMask.size(); i++) {
+        if (!dofMask[i])
+            continue;
+
+        if (i < 3)
+            velocity[iter] = (currentAgentState[iter] - previousAgentState[iter]) / dt;
+        else
+            velocity[iter] = robot::Robot::estimateAngularVelocity(currentAgentState[iter], previousAgentState[iter], dt);
+
+        iter++;
+    }
+    return velocity;
+}
+
+Eigen::VectorXd Agent::estimateAgentAcceleration(const Eigen::VectorXd& currentAgentState, const Eigen::VectorXd& previousAgentState,
+                                                 const Eigen::VectorXd& oldAgentState, const double& dt) const {
+    const Eigen::VectorXd currentVelocity = estimateAgentVelocity(currentAgentState, previousAgentState, dt);
+    const Eigen::VectorXd previousVelocity = estimateAgentVelocity(previousAgentState, oldAgentState, dt);
+    return (currentVelocity - previousVelocity) / dt;
+}
+
 void Agent::MotionTrajectory::check(const uint& agentStateSize) const {
     if (data.size() != numSteps * agentStateSize)
         LENNY_LOG_ERROR("Invalid motion trajectory (%d VS %d)", data.size(), numSteps * agentStateSize)

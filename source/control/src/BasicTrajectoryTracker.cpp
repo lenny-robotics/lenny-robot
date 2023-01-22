@@ -38,7 +38,7 @@ void BasicTrajectoryTracker::gotoStateInTime(const Eigen::VectorXd& state, const
     rci.getCurrentValues(currentPosition, currentVelocity);
 
     //Compute delta
-    const Eigen::VectorXd delta = rci.estimateRobotVelocity(state, currentPosition, 1.0);
+    const Eigen::VectorXd delta = rci.robot.estimateVelocity(state, currentPosition, 1.0);
 
     //Fill trajectory
     const double dt = 1.0 / 30.0;
@@ -110,7 +110,7 @@ void BasicTrajectoryTracker::applyTrajectoryExecution(const tools::TrajectoryXd&
         //Handle framerate
         const double waitTime = (1.0 / targetFramerate) - framerateTimer.time();
         if (waitTime > 0.0)
-            framerateTimer.sleep(waitTime);
+            framerateTimer.sleep(waitTime, true);
         currentFramerate = 1.0 / framerateTimer.time();
         averageDeltaT = 0.5 * (averageDeltaT + framerateTimer.time());
         if (printDebugInfo && (targetFramerate - currentFramerate > 1.0))

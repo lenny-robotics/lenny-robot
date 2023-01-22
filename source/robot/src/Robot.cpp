@@ -526,6 +526,39 @@ void Robot::computeGlobalLinkPoses(LinkPoses& globalLinkPoses, const Eigen::Vect
     setPoses(setPoses, base->linkName);
 }
 
+double Robot::estimateAngularVelocity(const double& currentAngle, const double& previousAngle, const double& dt) {
+    double diff = currentAngle - previousAngle;
+    while (diff > PI)
+        diff -= PI;
+    while (diff < -PI)
+        diff += PI;
+    if (diff >= PI || diff <= -PI)
+        LENNY_LOG_ERROR("Something is still wrong with the difference: %lf - %lf = %lf", currentAngle, previousAngle, diff)
+    return diff / dt;
+};
+
+Eigen::VectorXd Robot::estimateVelocity(const Eigen::VectorXd& currentState, const Eigen::VectorXd& previousState, const double& dt) const {
+    //Perform checks
+    checkState(currentState);
+    checkState(previousState);
+    if (dt < 1e-6)
+        LENNY_LOG_ERROR("Invalid input for dt: '%lf'", dt)
+
+    //Velocity estimation
+    Eigen::VectorXd velocity(getStateSize());
+    velocity.segment(0, 3) = (currentState.segment(0, 3) - previousState.segment(0, 3)) / dt;
+    for (int i = 3; i < getStateSize(); i++)
+        velocity[i] = estimateAngularVelocity(currentState[i], previousState[i], dt);
+    return velocity;
+}
+
+Eigen::VectorXd Robot::estimateAcceleration(const Eigen::VectorXd& currentState, const Eigen::VectorXd& previousState, const Eigen::VectorXd& oldState,
+                                            const double& dt) const {
+    const Eigen::VectorXd currentVelocity = estimateVelocity(currentState, previousState, dt);
+    const Eigen::VectorXd previousVelocity = estimateVelocity(previousState, oldState, dt);
+    return (currentVelocity - previousVelocity) / dt;
+}
+
 void Robot::drawScene(const Eigen::VectorXd& state, const std::map<std::string, Eigen::VectorXd>& endEffectorStates) const {
     DRAWING_FLAGS flags = DRAWING_FLAGS::SHOW_NONE;
     if (showSkeleton)
