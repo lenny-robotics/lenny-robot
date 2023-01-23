@@ -132,7 +132,6 @@ public:
     std::unordered_map<std::string, rapt::Gripper> grippers;                                       //[description, gripper]
     std::unordered_map<std::string, std::vector<collision::Primitive::SPtr>> collisionPrimitives;  //[linkName, primitives]
     std::unordered_map<std::string, std::vector<std::string>> selfCollisionLinkMap;                //[linkName, linkNames]
-    tools::Transformation localBaseTrafo = tools::Transformation();                                //For base constraints
 
     //--- Drawing
     double infoAlpha = 1.0;

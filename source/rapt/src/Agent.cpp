@@ -427,12 +427,6 @@ void Agent::drawGui(const bool withDrawingOptions) {
             Gui::I->TreePop();
         }
 
-        if (Gui::I->TreeNode("Settings")) {
-            Gui::I->Input("Local Base Trafo", localBaseTrafo);
-
-            Gui::I->TreePop();
-        }
-
         if (withDrawingOptions && Gui::I->TreeNode("Drawing")) {
             Gui::I->Checkbox("Show Skeleton", showSkeleton);
             Gui::I->Checkbox("Show Coordinate Frames", showCoordinateFrames);
