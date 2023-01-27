@@ -69,6 +69,8 @@ public:
     //--- Estimates
     static double estimateAngularVelocity(const double& currentAngle, const double& previousAngle, const double& dt);
     Eigen::VectorXd estimateVelocity(const Eigen::VectorXd& currentState, const Eigen::VectorXd& previousState, const double& dt) const;
+
+    static double estimateAngularAcceleration(const double& currentAngle, const double& previousAngle, const double& oldAngle, const double& dt);
     Eigen::VectorXd estimateAcceleration(const Eigen::VectorXd& currentState, const Eigen::VectorXd& previousState, const Eigen::VectorXd& oldState,
                                          const double& dt) const;
 

@@ -552,6 +552,12 @@ Eigen::VectorXd Robot::estimateVelocity(const Eigen::VectorXd& currentState, con
     return velocity;
 }
 
+double Robot::estimateAngularAcceleration(const double& currentAngle, const double& previousAngle, const double& oldAngle, const double& dt) {
+    const double currentVelocity = estimateAngularVelocity(currentAngle, previousAngle, dt);
+    const double previousVelocity = estimateAngularVelocity(previousAngle, oldAngle, dt);
+    return (currentVelocity - previousVelocity) / dt;
+}
+
 Eigen::VectorXd Robot::estimateAcceleration(const Eigen::VectorXd& currentState, const Eigen::VectorXd& previousState, const Eigen::VectorXd& oldState,
                                             const double& dt) const {
     const Eigen::VectorXd currentVelocity = estimateVelocity(currentState, previousState, dt);
