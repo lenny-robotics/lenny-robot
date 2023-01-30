@@ -355,7 +355,12 @@ void Agent::drawVisuals(const Eigen::VectorXd& agentState, const std::optional<E
 void Agent::drawGui(const bool withDrawingOptions) {
     using tools::Gui;
     if (Gui::I->TreeNode(std::string("Agent - `" + name + "`").c_str())) {
-        robot.drawFKGui(initialRobotState, "Initial Robot State");
+        if (Gui::I->TreeNode("Initial Robot State")) {
+            robot.drawFKGui(initialRobotState, "Position", robot::Robot::POSITION);
+            robot.drawFKGui(initialRobotVelocity, "Velocity", robot::Robot::VELOCITY);
+
+            Gui::I->TreePop();
+        }
 
         if (Gui::I->TreeNode("Grippers")) {
             for (auto& [gripperName, gripper] : grippers)

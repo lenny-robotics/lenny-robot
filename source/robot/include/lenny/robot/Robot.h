@@ -93,7 +93,7 @@ public:
 
     //--- Gui
     void drawGui(const bool withDrawingOptions = false);
-    bool drawFKGui(Eigen::VectorXd& state, const char* label) const;
+    bool drawFKGui(Eigen::VectorXd& state, const char* label, const LIMITS_TYPE& limitsType = POSITION) const;
 
     //--- Interaction ([linkName, globalIntersectionPoint]
     std::optional<std::pair<std::string, Eigen::Vector3d>> getFirstLinkHitByRay(const Eigen::VectorXd& state, const Ray& ray) const;

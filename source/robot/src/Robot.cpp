@@ -661,45 +661,40 @@ void Robot::drawGui(const bool withDrawingOptions) {
     }
 }
 
-bool Robot::drawFKGui(Eigen::VectorXd& state, const char* label) const {
+bool Robot::drawFKGui(Eigen::VectorXd& state, const char* label, const LIMITS_TYPE& limitsType) const {
     checkState(state);
 
     using tools::Gui;
     bool triggered = false;
     if (Gui::I->TreeNode(label)) {
-        if (Gui::I->TreeNode("State")) {
-            std::pair<double, double> bounds;
-            for (uint i = 0; i < 6; i++) {
-                if (base->posLimitsList[i].has_value()) {
-                    bounds = base->posLimitsList[i].value();
-                } else {
-                    if (i < 3)
-                        bounds = {-10.0, 10.0};
-                    else
-                        bounds = {-PI, PI};
-                }
-                if (Gui::I->Slider(std::string(Base::dofNames[i]).c_str(), state[i], bounds.first, bounds.second))
-                    triggered = true;
-            }
-            for (const auto& [jointName, joint] : joints) {
-                bounds = joint.angleLimits.has_value() ? joint.angleLimits.value() : std::pair<double, double>{-PI, PI};
-                if (Gui::I->Slider(jointName.c_str(), state[getStateIndex(jointName)], bounds.first, bounds.second))
-                    triggered = true;
-            }
+        //--- Base
+        for (uint i = 0; i < 6; i++) {
+            Limits limits = std::nullopt;
+            if (limitsType == POSITION)
+                limits = base->posLimitsList[i];
+            else if (limitsType == VELOCITY)
+                limits = base->velLimitsList[i];
+            else if (limitsType == ACCELERATION)
+                limits = base->accLimitsList[i];
 
-            Gui::I->TreePop();
+            const auto bounds = limits.has_value() ? limits.value() : std::pair<double, double>{-2.0 * PI, 2.0 * PI};
+            if (Gui::I->Slider(std::string(Base::dofNames[i]).c_str(), state[i], bounds.first, bounds.second))
+                triggered = true;
         }
 
-        if (Gui::I->TreeNode("Save & Load")) {
-            if (Gui::I->Button("Save current state to file"))
-                saveStateToFile(state, LENNY_PROJECT_FOLDER "/logs/RobotState-" + name + "-" + tools::utils::getCurrentDateAndTime() + ".json");
-            if (Gui::I->Button("Load state from file")) {
-                std::optional<Eigen::VectorXd> newState = loadStateFromFile(nullptr);
-                if (newState.has_value())
-                    state = newState.value();
-            }
+        //--- Joints
+        for (const auto& [jointName, joint] : joints) {
+            Limits limits = std::nullopt;
+            if (limitsType == POSITION)
+                limits = joint.angleLimits;
+            else if (limitsType == VELOCITY)
+                limits = joint.velLimits;
+            else if (limitsType == ACCELERATION)
+                limits = joint.accLimits;
 
-            Gui::I->TreePop();
+            const auto bounds = limits.has_value() ? limits.value() : std::pair<double, double>{-2.0 * PI, 2.0 * PI};
+            if (Gui::I->Slider(jointName.c_str(), state[getStateIndex(jointName)], bounds.first, bounds.second))
+                triggered = true;
         }
 
         Gui::I->TreePop();
