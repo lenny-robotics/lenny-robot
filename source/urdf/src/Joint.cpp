@@ -16,7 +16,6 @@ Joint::Limits Joint::Limits::parseFromXmlElement(tinyxml2::XMLElement* xmlElemen
     limits.upper = Utils::parseDoubleValueFromAttribute(xmlElement, "upper", "Joint::Limits", Utils::OPTIONAL);
     limits.effort = Utils::parseDoubleValueFromAttribute(xmlElement, "effort", "Joint::Limits", Utils::OPTIONAL);
     limits.velocity = Utils::parseDoubleValueFromAttribute(xmlElement, "velocity", "Joint::Limits", Utils::OPTIONAL);
-    limits.acceleration = Utils::parseDoubleValueFromAttribute(xmlElement, "acceleration", "Joint::Limits", Utils::OPTIONAL);
     return limits;
 }
 

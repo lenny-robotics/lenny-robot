@@ -120,10 +120,6 @@ void Robot::loadFromFile() {
             //Velocity limits
             if (urdfJoint.limits->velocity.has_value())
                 robotJoint.velLimits = {-urdfJoint.limits->velocity.value(), urdfJoint.limits->velocity.value()};
-
-            //Acceleration limits
-            if (urdfJoint.limits->acceleration.has_value())
-                robotJoint.accLimits = {-urdfJoint.limits->acceleration.value(), urdfJoint.limits->acceleration.value()};
         }
     }
 
@@ -265,8 +261,6 @@ const Limits& Robot::getLimitsForDofIndex(const uint& dofIndex, const LIMITS_TYP
             return base->posLimitsList[dofIndex];
         else if (limitsType == VELOCITY)
             return base->velLimitsList[dofIndex];
-        else if (limitsType == ACCELERATION)
-            return base->accLimitsList[dofIndex];
     } else {  //Joints
         auto jIter = joints.begin();
         std::advance(jIter, dofIndex - 6);
@@ -274,8 +268,6 @@ const Limits& Robot::getLimitsForDofIndex(const uint& dofIndex, const LIMITS_TYP
             return jIter->second.angleLimits;
         else if (limitsType == VELOCITY)
             return jIter->second.velLimits;
-        else if (limitsType == ACCELERATION)
-            return jIter->second.accLimits;
     }
     return base->posLimitsList[0];  //Dummy
 }
@@ -674,8 +666,6 @@ bool Robot::drawFKGui(Eigen::VectorXd& state, const char* label, const LIMITS_TY
                 limits = base->posLimitsList[i];
             else if (limitsType == VELOCITY)
                 limits = base->velLimitsList[i];
-            else if (limitsType == ACCELERATION)
-                limits = base->accLimitsList[i];
 
             const auto bounds = limits.has_value() ? limits.value() : std::pair<double, double>{-2.0 * PI, 2.0 * PI};
             if (Gui::I->Slider(std::string(Base::dofNames[i]).c_str(), state[i], bounds.first, bounds.second))
@@ -689,8 +679,6 @@ bool Robot::drawFKGui(Eigen::VectorXd& state, const char* label, const LIMITS_TY
                 limits = joint.angleLimits;
             else if (limitsType == VELOCITY)
                 limits = joint.velLimits;
-            else if (limitsType == ACCELERATION)
-                limits = joint.accLimits;
 
             const auto bounds = limits.has_value() ? limits.value() : std::pair<double, double>{-2.0 * PI, 2.0 * PI};
             if (Gui::I->Slider(jointName.c_str(), state[getStateIndex(jointName)], bounds.first, bounds.second))

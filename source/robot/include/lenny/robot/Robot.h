@@ -30,7 +30,7 @@ public:
     uint getStateSize() const;
     uint getStateIndex(const std::string& jointName) const;
     std::string getDescriptionForDofIndex(const uint& dofIndex) const;
-    enum LIMITS_TYPE { POSITION, VELOCITY, ACCELERATION };
+    enum LIMITS_TYPE { POSITION, VELOCITY };
     const robot::Limits& getLimitsForDofIndex(const uint& dofIndex, const LIMITS_TYPE limitsType) const;
     int getNumberOfJointsInbetween(const std::string& linkName_A, const std::string& linkName_B) const;
 
