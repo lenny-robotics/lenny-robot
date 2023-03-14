@@ -48,11 +48,11 @@ public:
                              const Eigen::VectorXb& dofMask) const;
 
     //--- Tests
-    void testPointJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const;
-    void testPointTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const;
+    bool testPointJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const;
+    bool testPointTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const;
 
-    void testVectorJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const;
-    void testVectorTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const;
+    bool testVectorJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const;
+    bool testVectorTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const;
 
     //--- Transformation helpers
     Eigen::QuaternionD computeGlobalOrientation(const Eigen::VectorXd& state, const Eigen::QuaternionD& q_local, const std::string& linkName) const;

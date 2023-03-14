@@ -411,17 +411,17 @@ void Robot::computeVectorTensor(Eigen::TensorD& tensor, const Eigen::VectorXd& s
     computeTensor(tensor, state, v_local, linkName, dofMask, getGlobalCoordinates);
 }
 
-void Robot::testPointJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const {
+bool Robot::testPointJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const {
     checkState(state);
     checkLinkName(linkName);
     auto eval = [&](Eigen::VectorXd& P, const Eigen::VectorXd& s) -> void { P = computeGlobalPoint(s, p_local, linkName); };
     auto anal = [&](Eigen::MatrixXd& dPdS, const Eigen::VectorXd& s) -> void {
         computePointJacobian(dPdS, s, p_local, linkName, Eigen::VectorXb::Ones(s.size()));
     };
-    fd.testMatrix(eval, anal, state, "Point Jacobian", 3, true);
+    return fd.testMatrix(eval, anal, state, "Point Jacobian", 3, true);
 }
 
-void Robot::testPointTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const {
+bool Robot::testPointTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const {
     checkState(state);
     checkLinkName(linkName);
     auto eval = [&](Eigen::MatrixXd& dPdS, const Eigen::VectorXd& s) -> void {
@@ -430,20 +430,20 @@ void Robot::testPointTensor(const Eigen::VectorXd& state, const Eigen::Vector3d&
     auto anal = [&](Eigen::TensorD& d2PdS2, const Eigen::VectorXd& s) -> void {
         computePointTensor(d2PdS2, s, p_local, linkName, Eigen::VectorXb::Ones(s.size()));
     };
-    fd.testTensor(eval, anal, state, "Point Tensor", 3, state.size());
+    return fd.testTensor(eval, anal, state, "Point Tensor", 3, state.size());
 }
 
-void Robot::testVectorJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const {
+bool Robot::testVectorJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const {
     checkState(state);
     checkLinkName(linkName);
     auto eval = [&](Eigen::VectorXd& V, const Eigen::VectorXd& s) -> void { V = computeGlobalVector(s, v_local, linkName); };
     auto anal = [&](Eigen::MatrixXd& dVdS, const Eigen::VectorXd& s) -> void {
         computeVectorJacobian(dVdS, s, v_local, linkName, Eigen::VectorXb::Ones(s.size()));
     };
-    fd.testMatrix(eval, anal, state, "Vector Jacobian", 3, true);
+    return fd.testMatrix(eval, anal, state, "Vector Jacobian", 3, true);
 }
 
-void Robot::testVectorTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const {
+bool Robot::testVectorTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const {
     checkState(state);
     checkLinkName(linkName);
     auto eval = [&](Eigen::MatrixXd& dVdS, const Eigen::VectorXd& s) -> void {
@@ -452,7 +452,7 @@ void Robot::testVectorTensor(const Eigen::VectorXd& state, const Eigen::Vector3d
     auto anal = [&](Eigen::TensorD& d2VdS2, const Eigen::VectorXd& s) -> void {
         computeVectorTensor(d2VdS2, s, v_local, linkName, Eigen::VectorXb::Ones(s.size()));
     };
-    fd.testTensor(eval, anal, state, "Vector Tensor", 3, state.size());
+    return fd.testTensor(eval, anal, state, "Vector Tensor", 3, state.size());
 }
 
 Eigen::QuaternionD Robot::computeGlobalOrientation(const Eigen::VectorXd& state, const Eigen::QuaternionD& q_local, const std::string& linkName) const {
