@@ -15,14 +15,9 @@ public:
     ~ControlApp() = default;
 
     void setTrajectory();
-
-    //--- Process
-    void restart() override;
-    void process() override;
-
-    //--- Drawing
-    void drawScene() const override;
-    void drawGui() override;
+    void prepareToDraw() override;
+    void drawScene() const;
+    void drawGui();
 
 public:
     TestRobot robot;

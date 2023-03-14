@@ -1,13 +1,12 @@
 #include "ControlApp.h"
 
-#include <lenny/gui/ImGui.h>
-#include <lenny/gui/ImGuizmo.h>
-
 namespace lenny {
 
 ControlApp::ControlApp() : gui::Application("ControlApp") {
-    showOrigin = false;
-    setTrajectory();
+    //Setup scene
+    const auto [width, height] = getCurrentWindowSize();
+    scenes.emplace_back(std::make_shared<gui::Scene>("Scene-1", width, height));
+    scenes.back()->f_drawScene = [&]() -> void { drawScene(); };
 }
 
 void ControlApp::setTrajectory() {
@@ -16,12 +15,9 @@ void ControlApp::setTrajectory() {
     trajectory.addEntry((double)numSteps * getDt(), finalRobotState);
 }
 
-void ControlApp::restart() {
-    initialRobotState.setZero();
-}
-
-void ControlApp::process() {
+void ControlApp::prepareToDraw() {
     setTrajectory();
+
     if (isRecedingHorizon)
         initialRobotState = trajectory.getLinearInterpolation(getDt());
 
@@ -39,8 +35,6 @@ void ControlApp::drawScene() const {
 }
 
 void ControlApp::drawGui() {
-    gui::Application::drawGui();
-
     ImGui::Begin("Main Menu");
 
     if (ImGui::TreeNode("App Settings")) {
