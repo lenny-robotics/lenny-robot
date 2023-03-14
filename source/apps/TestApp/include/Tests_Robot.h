@@ -5,7 +5,6 @@
 
 TEST(robot, derivatives) {
     using namespace lenny;
-
     const robot::Robot robot(LENNY_ROBOT_APP_FOLDER "/config/test_robots/testRobot1.urdf", nullptr);
     const Eigen::VectorXd state = Eigen::VectorXd::Random(robot.getStateSize());
 
@@ -24,7 +23,6 @@ TEST(robot, derivatives) {
 
 TEST(robot, transformations) {
     using namespace lenny;
-
     const robot::Robot robot(LENNY_ROBOT_APP_FOLDER "/config/test_robots/testRobot1.urdf", nullptr);
     const Eigen::VectorXd state = Eigen::VectorXd::Random(robot.getStateSize());
 
@@ -60,7 +58,6 @@ TEST(robot, transformations) {
 
 TEST(robot, numberOfJointsInbetween) {
     using namespace lenny;
-
     const robot::Robot robot(LENNY_ROBOT_APP_FOLDER "/config/test_robots/testRobot2.urdf", nullptr);
 
     std::map<std::pair<std::string, std::string>, int> lookup = {
@@ -96,4 +93,24 @@ TEST(robot, freeFloatingBase) {
     const lenny::robot::Robot robot(LENNY_ROBOT_APP_FOLDER "/config/test_robots/testRobot3.urdf", nullptr);
 }
 
-//ToDo: Test for velocity and acceleration estimates!
+TEST(robot, estimates) {
+    using namespace lenny;
+    const robot::Robot robot(LENNY_ROBOT_APP_FOLDER "/config/test_robots/testRobot1.urdf", nullptr);
+    const double dt = 0.1;
+    for (double delta = 1e-5; delta <= 1.0; delta *= -5.0) {
+        const Eigen::VectorXd deltaState = delta * Eigen::VectorXd::Ones(robot.getStateSize());
+        Eigen::VectorXd currentState = Eigen::VectorXd::Random(robot.getStateSize());
+        Eigen::VectorXd previousState = currentState - dt * deltaState;
+        Eigen::VectorXd oldState = previousState - dt * deltaState;
+
+        for (int i = 0; i < 100; i++) {
+            const Eigen::VectorXd velocity = robot.estimateVelocity(currentState, previousState, dt);
+            const Eigen::VectorXd acceleration = robot.estimateAcceleration(currentState, previousState, oldState, dt);
+            EXPECT_TRUE((velocity - deltaState).norm() < 1e-5);
+            EXPECT_TRUE(acceleration.norm() < 1e-5);
+            oldState = previousState;
+            previousState = currentState;
+            currentState += dt * deltaState;
+        }
+    }
+}

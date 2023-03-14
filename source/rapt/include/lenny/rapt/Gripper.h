@@ -2,6 +2,8 @@
 
 #include <lenny/tools/Timer.h>
 
+#include <string>
+
 namespace lenny::rapt {
 
 class Gripper {
