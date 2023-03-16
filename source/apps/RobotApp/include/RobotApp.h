@@ -12,11 +12,11 @@ public:
     ~RobotApp() = default;
 
     //--- Drawing
-    void drawScene() const override;
-    void drawGui() override;
+    void drawScene() const;
+    void drawGui();
 
     //--- Interaction
-    void mouseMoveCallback(double xPos, double yPos) override;
+    void mouseMoveCallback(double xPos, double yPos, Ray ray);
 
 public:
     TestRobot robot;

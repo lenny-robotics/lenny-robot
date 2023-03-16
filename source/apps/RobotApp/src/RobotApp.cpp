@@ -7,8 +7,11 @@
 namespace lenny {
 
 RobotApp::RobotApp() : gui::Application("RobotApp") {
-    showOrigin = false;
-    showGround = false;
+    //Setup scene
+    const auto [width, height] = getCurrentWindowSize();
+    scenes.emplace_back(std::make_shared<gui::Scene>("Scene-1", width, height));
+    scenes.back()->f_drawScene = [&]() -> void { drawScene(); };
+    scenes.back()->f_mouseMoveCallback = [&](double xPos, double yPos, Ray ray) -> void { mouseMoveCallback(xPos, yPos, ray); };
 }
 
 void RobotApp::drawScene() const {
@@ -22,8 +25,6 @@ void RobotApp::drawScene() const {
 }
 
 void RobotApp::drawGui() {
-    gui::Application::drawGui();
-
     ImGui::Begin("Main Menu");
 
     robot.drawGui(true);
@@ -32,9 +33,8 @@ void RobotApp::drawGui() {
     ImGui::End();
 }
 
-void RobotApp::mouseMoveCallback(double xPos, double yPos) {
-    rayIntersection = robot.getFirstLinkHitByRay(state, camera.getRayFromScreenCoordinates(xPos, yPos));
-    gui::Application::mouseMoveCallback(xPos, yPos);
+void RobotApp::mouseMoveCallback(double xPos, double yPos, Ray ray) {
+    rayIntersection = robot.getFirstLinkHitByRay(state, ray);
 }
 
 }  // namespace lenny

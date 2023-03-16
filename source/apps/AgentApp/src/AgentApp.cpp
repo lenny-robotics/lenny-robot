@@ -5,8 +5,10 @@
 namespace lenny {
 
 AgentApp::AgentApp() : gui::Application("AgentApp") {
-    showOrigin = false;
-    showGround = false;
+    //Setup scene
+    const auto [width, height] = getCurrentWindowSize();
+    scenes.emplace_back(std::make_shared<gui::Scene>("Scene-1", width, height));
+    scenes.back()->f_drawScene = [&]() -> void { drawScene(); };
 }
 
 void AgentApp::drawScene() const {
@@ -14,12 +16,8 @@ void AgentApp::drawScene() const {
 }
 
 void AgentApp::drawGui() {
-    gui::Application::drawGui();
-
     ImGui::Begin("Main Menu");
-
     agent.drawGui(true);
-
     ImGui::End();
 }
 

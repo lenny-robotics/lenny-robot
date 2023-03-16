@@ -253,6 +253,38 @@ tools::Transformation Agent::computeLocalPose(const Eigen::VectorXd& agentState,
     return robot.computeLocalPose(robotState, t_global, linkName);
 }
 
+Eigen::VectorXd Agent::estimateAgentVelocity(const Eigen::VectorXd& currentAgentState, const Eigen::VectorXd& previousAgentState, const double& dt) const {
+    //Check inputs
+    checkState(currentAgentState);
+    checkState(previousAgentState);
+    const int size = getStateSize();
+    if (dt < 1e-6)
+        LENNY_LOG_ERROR("Invalid input for dt: '%lf'", dt)
+
+    //Estimate velocity
+    int iter = 0;
+    Eigen::VectorXd velocity(size);
+    for (int i = 0; i < dofMask.size(); i++) {
+        if (!dofMask[i])
+            continue;
+
+        if (i < 3)
+            velocity[iter] = (currentAgentState[iter] - previousAgentState[iter]) / dt;
+        else
+            velocity[iter] = robot::Robot::estimateAngularVelocity(currentAgentState[iter], previousAgentState[iter], dt);
+
+        iter++;
+    }
+    return velocity;
+}
+
+Eigen::VectorXd Agent::estimateAgentAcceleration(const Eigen::VectorXd& currentAgentState, const Eigen::VectorXd& previousAgentState,
+                                                 const Eigen::VectorXd& oldAgentState, const double& dt) const {
+    const Eigen::VectorXd currentVelocity = estimateAgentVelocity(currentAgentState, previousAgentState, dt);
+    const Eigen::VectorXd previousVelocity = estimateAgentVelocity(previousAgentState, oldAgentState, dt);
+    return (currentVelocity - previousVelocity) / dt;
+}
+
 void Agent::MotionTrajectory::check(const uint& agentStateSize) const {
     if (data.size() != numSteps * agentStateSize)
         LENNY_LOG_ERROR("Invalid motion trajectory (%d VS %d)", data.size(), numSteps * agentStateSize)
@@ -323,7 +355,12 @@ void Agent::drawVisuals(const Eigen::VectorXd& agentState, const std::optional<E
 void Agent::drawGui(const bool withDrawingOptions) {
     using tools::Gui;
     if (Gui::I->TreeNode(std::string("Agent - `" + name + "`").c_str())) {
-        robot.drawFKGui(initialRobotState, "Initial Robot State");
+        if (Gui::I->TreeNode("Initial Robot State")) {
+            robot.drawFKGui(initialRobotState, "Position", robot::Robot::POSITION);
+            robot.drawFKGui(initialRobotVelocity, "Velocity", robot::Robot::VELOCITY);
+
+            Gui::I->TreePop();
+        }
 
         if (Gui::I->TreeNode("Grippers")) {
             for (auto& [gripperName, gripper] : grippers)
@@ -391,12 +428,6 @@ void Agent::drawGui(const bool withDrawingOptions) {
 
                 Gui::I->TreePop();
             }
-
-            Gui::I->TreePop();
-        }
-
-        if (Gui::I->TreeNode("Settings")) {
-            Gui::I->Input("Local Base Trafo", localBaseTrafo);
 
             Gui::I->TreePop();
         }

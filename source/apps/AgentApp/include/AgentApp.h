@@ -12,8 +12,7 @@ public:
     AgentApp();
     ~AgentApp() = default;
 
-    //--- Drawing
-    void drawScene() const override;
+    void drawScene() const;
     void drawGui() override;
 
 public:

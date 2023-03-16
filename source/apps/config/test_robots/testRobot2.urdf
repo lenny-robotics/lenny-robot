@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <robot name="dummy">
-  <link name="base"/>
+  <link name="link0"/>
   
   <link name="link1"/>
   <link name="link1_1"/>
@@ -15,7 +15,7 @@
   <link name="link2_2_1"/>
 
   <joint name="joint1" type="revolute">
-    <parent link="base"/>
+    <parent link="link0"/>
     <child link="link1"/>
     <origin rpy="0.0 0.0 0.0" xyz="0.1 0.0 0.0"/>
     <axis xyz="0 1 0"/>
@@ -46,7 +46,7 @@
   </joint>
   
   <joint name="joint2" type="revolute">
-    <parent link="base"/>
+    <parent link="link0"/>
     <child link="link2"/>
     <origin rpy="0.0 0.0 0.0" xyz="0.1 0.0 0.0"/>
     <axis xyz="0 1 0"/>

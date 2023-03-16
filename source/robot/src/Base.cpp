@@ -12,11 +12,17 @@ void Base::drawGui() {
     using tools::Gui;
     if (Gui::I->TreeNode("Base")) {
         Gui::I->Text("Link: %s", linkName.c_str());
-        for (int i = 0; i < 6; i++)
-            drawLimitsGui(("Position Limits - " + std::string(dofNames[i])).c_str(), posLimitsList.at(i));
+        if (Gui::I->TreeNode("Position Limits")) {
+            for (int i = 0; i < 6; i++)
+                drawLimitsGui(std::string(dofNames[i]).c_str(), posLimitsList.at(i));
+            Gui::I->TreePop();
+        }
 
-        for (int i = 0; i < 6; i++)
-            drawLimitsGui(("Velocity Limits - " + std::string(dofNames[i])).c_str(), posLimitsList.at(i));
+        if (Gui::I->TreeNode("Velocity Limits")) {
+            for (int i = 0; i < 6; i++)
+                drawLimitsGui(std::string(dofNames[i]).c_str(), velLimitsList.at(i));
+            Gui::I->TreePop();
+        }
 
         if (Gui::I->Button("Save limits to file"))
             saveLimitsToFile(LENNY_PROJECT_FOLDER "/logs/RobotBaseLimits-" + tools::utils::getCurrentDateAndTime() + ".json");

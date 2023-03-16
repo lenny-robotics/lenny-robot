@@ -118,7 +118,7 @@ void Robot::loadFromFile() {
                 robotJoint.angleLimits = {urdfJoint.limits->lower.value(), urdfJoint.limits->upper.value()};
 
             //Velocity limits
-            if (urdfJoint.limits->velocity)
+            if (urdfJoint.limits->velocity.has_value())
                 robotJoint.velLimits = {-urdfJoint.limits->velocity.value(), urdfJoint.limits->velocity.value()};
         }
     }
@@ -411,17 +411,17 @@ void Robot::computeVectorTensor(Eigen::TensorD& tensor, const Eigen::VectorXd& s
     computeTensor(tensor, state, v_local, linkName, dofMask, getGlobalCoordinates);
 }
 
-void Robot::testPointJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const {
+bool Robot::testPointJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const {
     checkState(state);
     checkLinkName(linkName);
     auto eval = [&](Eigen::VectorXd& P, const Eigen::VectorXd& s) -> void { P = computeGlobalPoint(s, p_local, linkName); };
     auto anal = [&](Eigen::MatrixXd& dPdS, const Eigen::VectorXd& s) -> void {
         computePointJacobian(dPdS, s, p_local, linkName, Eigen::VectorXb::Ones(s.size()));
     };
-    fd.testMatrix(eval, anal, state, "Point Jacobian", 3, true);
+    return fd.testMatrix(eval, anal, state, "Point Jacobian", 3, true);
 }
 
-void Robot::testPointTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const {
+bool Robot::testPointTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const {
     checkState(state);
     checkLinkName(linkName);
     auto eval = [&](Eigen::MatrixXd& dPdS, const Eigen::VectorXd& s) -> void {
@@ -430,20 +430,20 @@ void Robot::testPointTensor(const Eigen::VectorXd& state, const Eigen::Vector3d&
     auto anal = [&](Eigen::TensorD& d2PdS2, const Eigen::VectorXd& s) -> void {
         computePointTensor(d2PdS2, s, p_local, linkName, Eigen::VectorXb::Ones(s.size()));
     };
-    fd.testTensor(eval, anal, state, "Point Tensor", 3, state.size());
+    return fd.testTensor(eval, anal, state, "Point Tensor", 3, state.size());
 }
 
-void Robot::testVectorJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const {
+bool Robot::testVectorJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const {
     checkState(state);
     checkLinkName(linkName);
     auto eval = [&](Eigen::VectorXd& V, const Eigen::VectorXd& s) -> void { V = computeGlobalVector(s, v_local, linkName); };
     auto anal = [&](Eigen::MatrixXd& dVdS, const Eigen::VectorXd& s) -> void {
         computeVectorJacobian(dVdS, s, v_local, linkName, Eigen::VectorXb::Ones(s.size()));
     };
-    fd.testMatrix(eval, anal, state, "Vector Jacobian", 3, true);
+    return fd.testMatrix(eval, anal, state, "Vector Jacobian", 3, true);
 }
 
-void Robot::testVectorTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const {
+bool Robot::testVectorTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const {
     checkState(state);
     checkLinkName(linkName);
     auto eval = [&](Eigen::MatrixXd& dVdS, const Eigen::VectorXd& s) -> void {
@@ -452,7 +452,7 @@ void Robot::testVectorTensor(const Eigen::VectorXd& state, const Eigen::Vector3d
     auto anal = [&](Eigen::TensorD& d2VdS2, const Eigen::VectorXd& s) -> void {
         computeVectorTensor(d2VdS2, s, v_local, linkName, Eigen::VectorXb::Ones(s.size()));
     };
-    fd.testTensor(eval, anal, state, "Vector Tensor", 3, state.size());
+    return fd.testTensor(eval, anal, state, "Vector Tensor", 3, state.size());
 }
 
 Eigen::QuaternionD Robot::computeGlobalOrientation(const Eigen::VectorXd& state, const Eigen::QuaternionD& q_local, const std::string& linkName) const {
@@ -516,6 +516,45 @@ void Robot::computeGlobalLinkPoses(LinkPoses& globalLinkPoses, const Eigen::Vect
         }
     };
     setPoses(setPoses, base->linkName);
+}
+
+double Robot::estimateAngularVelocity(const double& currentAngle, const double& previousAngle, const double& dt) {
+    double diff = currentAngle - previousAngle;
+    while (diff > PI)
+        diff -= PI;
+    while (diff < -PI)
+        diff += PI;
+    if (diff >= PI || diff <= -PI)
+        LENNY_LOG_ERROR("Something is still wrong with the difference: %lf - %lf = %lf", currentAngle, previousAngle, diff)
+    return diff / dt;
+};
+
+Eigen::VectorXd Robot::estimateVelocity(const Eigen::VectorXd& currentState, const Eigen::VectorXd& previousState, const double& dt) const {
+    //Perform checks
+    checkState(currentState);
+    checkState(previousState);
+    if (dt < 1e-6)
+        LENNY_LOG_ERROR("Invalid input for dt: '%lf'", dt)
+
+    //Velocity estimation
+    Eigen::VectorXd velocity(getStateSize());
+    velocity.segment(0, 3) = (currentState.segment(0, 3) - previousState.segment(0, 3)) / dt;
+    for (int i = 3; i < getStateSize(); i++)
+        velocity[i] = estimateAngularVelocity(currentState[i], previousState[i], dt);
+    return velocity;
+}
+
+double Robot::estimateAngularAcceleration(const double& currentAngle, const double& previousAngle, const double& oldAngle, const double& dt) {
+    const double currentVelocity = estimateAngularVelocity(currentAngle, previousAngle, dt);
+    const double previousVelocity = estimateAngularVelocity(previousAngle, oldAngle, dt);
+    return (currentVelocity - previousVelocity) / dt;
+}
+
+Eigen::VectorXd Robot::estimateAcceleration(const Eigen::VectorXd& currentState, const Eigen::VectorXd& previousState, const Eigen::VectorXd& oldState,
+                                            const double& dt) const {
+    const Eigen::VectorXd currentVelocity = estimateVelocity(currentState, previousState, dt);
+    const Eigen::VectorXd previousVelocity = estimateVelocity(previousState, oldState, dt);
+    return (currentVelocity - previousVelocity) / dt;
 }
 
 void Robot::drawScene(const Eigen::VectorXd& state, const std::map<std::string, Eigen::VectorXd>& endEffectorStates) const {
@@ -614,45 +653,36 @@ void Robot::drawGui(const bool withDrawingOptions) {
     }
 }
 
-bool Robot::drawFKGui(Eigen::VectorXd& state, const char* label) const {
+bool Robot::drawFKGui(Eigen::VectorXd& state, const char* label, const LIMITS_TYPE& limitsType) const {
     checkState(state);
 
     using tools::Gui;
     bool triggered = false;
     if (Gui::I->TreeNode(label)) {
-        if (Gui::I->TreeNode("State")) {
-            std::pair<double, double> bounds;
-            for (uint i = 0; i < 6; i++) {
-                if (base->posLimitsList[i].has_value()) {
-                    bounds = base->posLimitsList[i].value();
-                } else {
-                    if (i < 3)
-                        bounds = {-10.0, 10.0};
-                    else
-                        bounds = {-PI, PI};
-                }
-                if (Gui::I->Slider(std::string(Base::dofNames[i]).c_str(), state[i], bounds.first, bounds.second))
-                    triggered = true;
-            }
-            for (const auto& [jointName, joint] : joints) {
-                bounds = joint.angleLimits.has_value() ? joint.angleLimits.value() : std::pair<double, double>{-PI, PI};
-                if (Gui::I->Slider(jointName.c_str(), state[getStateIndex(jointName)], bounds.first, bounds.second))
-                    triggered = true;
-            }
+        //--- Base
+        for (uint i = 0; i < 6; i++) {
+            Limits limits = std::nullopt;
+            if (limitsType == POSITION)
+                limits = base->posLimitsList[i];
+            else if (limitsType == VELOCITY)
+                limits = base->velLimitsList[i];
 
-            Gui::I->TreePop();
+            const auto bounds = limits.has_value() ? limits.value() : std::pair<double, double>{-2.0 * PI, 2.0 * PI};
+            if (Gui::I->Slider(std::string(Base::dofNames[i]).c_str(), state[i], bounds.first, bounds.second))
+                triggered = true;
         }
 
-        if (Gui::I->TreeNode("Save & Load")) {
-            if (Gui::I->Button("Save current state to file"))
-                saveStateToFile(state, LENNY_PROJECT_FOLDER "/logs/RobotState-" + name + "-" + tools::utils::getCurrentDateAndTime() + ".json");
-            if (Gui::I->Button("Load state from file")) {
-                std::optional<Eigen::VectorXd> newState = loadStateFromFile(nullptr);
-                if (newState.has_value())
-                    state = newState.value();
-            }
+        //--- Joints
+        for (const auto& [jointName, joint] : joints) {
+            Limits limits = std::nullopt;
+            if (limitsType == POSITION)
+                limits = joint.angleLimits;
+            else if (limitsType == VELOCITY)
+                limits = joint.velLimits;
 
-            Gui::I->TreePop();
+            const auto bounds = limits.has_value() ? limits.value() : std::pair<double, double>{-2.0 * PI, 2.0 * PI};
+            if (Gui::I->Slider(jointName.c_str(), state[getStateIndex(jointName)], bounds.first, bounds.second))
+                triggered = true;
         }
 
         Gui::I->TreePop();

@@ -48,11 +48,11 @@ public:
                              const Eigen::VectorXb& dofMask) const;
 
     //--- Tests
-    void testPointJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const;
-    void testPointTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const;
+    bool testPointJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const;
+    bool testPointTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& p_local, const std::string& linkName) const;
 
-    void testVectorJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const;
-    void testVectorTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const;
+    bool testVectorJacobian(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const;
+    bool testVectorTensor(const Eigen::VectorXd& state, const Eigen::Vector3d& v_local, const std::string& linkName) const;
 
     //--- Transformation helpers
     Eigen::QuaternionD computeGlobalOrientation(const Eigen::VectorXd& state, const Eigen::QuaternionD& q_local, const std::string& linkName) const;
@@ -65,6 +65,14 @@ public:
 
     typedef std::map<std::string, tools::Transformation> LinkPoses;
     void computeGlobalLinkPoses(LinkPoses& globalLinkPoses, const Eigen::VectorXd& state) const;
+
+    //--- Estimates
+    static double estimateAngularVelocity(const double& currentAngle, const double& previousAngle, const double& dt);
+    Eigen::VectorXd estimateVelocity(const Eigen::VectorXd& currentState, const Eigen::VectorXd& previousState, const double& dt) const;
+
+    static double estimateAngularAcceleration(const double& currentAngle, const double& previousAngle, const double& oldAngle, const double& dt);
+    Eigen::VectorXd estimateAcceleration(const Eigen::VectorXd& currentState, const Eigen::VectorXd& previousState, const Eigen::VectorXd& oldState,
+                                         const double& dt) const;
 
     //--- Drawing
     void drawScene(const Eigen::VectorXd& state, const std::map<std::string, Eigen::VectorXd>& endEffectorStates) const;
@@ -85,7 +93,7 @@ public:
 
     //--- Gui
     void drawGui(const bool withDrawingOptions = false);
-    bool drawFKGui(Eigen::VectorXd& state, const char* label) const;
+    bool drawFKGui(Eigen::VectorXd& state, const char* label, const LIMITS_TYPE& limitsType = POSITION) const;
 
     //--- Interaction ([linkName, globalIntersectionPoint]
     std::optional<std::pair<std::string, Eigen::Vector3d>> getFirstLinkHitByRay(const Eigen::VectorXd& state, const Ray& ray) const;
