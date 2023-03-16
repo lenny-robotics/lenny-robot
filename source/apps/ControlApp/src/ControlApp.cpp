@@ -1,5 +1,7 @@
 #include "ControlApp.h"
 
+#include <lenny/gui/ImGui.h>
+
 namespace lenny {
 
 ControlApp::ControlApp() : gui::Application("ControlApp") {
