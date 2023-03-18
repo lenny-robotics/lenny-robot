@@ -31,6 +31,7 @@ public:
 
     //--- Helpers
     bool positionReached(const Eigen::VectorXd& currentRobotPosition, const Eigen::VectorXd& targetRobotPosition) const;
+    double estimateDelay() const;  //estimates delay based on plot data
 
     //--- Drawing
     void drawScene(double alpha = 0.5) const;

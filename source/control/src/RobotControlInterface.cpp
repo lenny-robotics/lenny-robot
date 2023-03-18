@@ -101,6 +101,27 @@ bool RobotControlInterface::positionReached(const Eigen::VectorXd& currentRobotP
     return true;
 }
 
+/*
+ * COMMENT: Estimates delay based on positionPlots (CURRENT_VALUE VS TARGET_VALUE)
+ */
+double RobotControlInterface::estimateDelay() const {
+    //Check if data is initialized
+    if (positionPlots.size() != getStateSize()){
+        LENNY_LOG_WARNING("Plot data does not seem to be initialized. Therefore, delay estimation does not work...")
+        return -1.0;
+    }
+
+    //Check if enough data has been recorded
+    if(positionPlots.at(0)->getData().size() < 100){
+        LENNY_LOG_WARNING("We should record at least 100 data points before the estimation...")
+        return -1.0;
+    }
+
+    
+
+
+}
+
 void RobotControlInterface::drawScene(double alpha) const {
     if (!isConnected())
         return;
