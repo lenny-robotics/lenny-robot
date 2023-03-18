@@ -23,8 +23,13 @@ public:
     TestRobot robot;
     Eigen::VectorXd initialRobotState = robot.getInitialState();
     Eigen::VectorXd finalRobotState = initialRobotState;
-    control::EmulatorControlInterface rci = control::EmulatorControlInterface(robot, Eigen::VectorXb::Ones(robot.getStateSize()),
-                                                                              gui::Plot<control::EmulatorControlInterface::PlotType>::f_addPlot);
+    std::function<Eigen::VectorXb()> getDofMask = [&]() -> Eigen::VectorXb {
+        Eigen::VectorXb dofMask = Eigen::VectorXb::Ones(robot.getStateSize());
+        dofMask.segment(0, 6).setZero();
+        return dofMask;
+    };
+    control::EmulatorControlInterface rci =
+        control::EmulatorControlInterface(robot, getDofMask(), gui::Plot<control::EmulatorControlInterface::PlotType>::f_addPlot);
     control::BasicTrajectoryTracker btt = control::BasicTrajectoryTracker(rci);
     tools::TrajectoryXd trajectory;
     uint numSteps = 60;

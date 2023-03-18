@@ -106,20 +106,52 @@ bool RobotControlInterface::positionReached(const Eigen::VectorXd& currentRobotP
  */
 double RobotControlInterface::estimateDelay() const {
     //Check if data is initialized
-    if (positionPlots.size() != getStateSize()){
+    if (positionPlots.size() != getStateSize() || getStateSize() <= 0) {
         LENNY_LOG_WARNING("Plot data does not seem to be initialized. Therefore, delay estimation does not work...")
         return -1.0;
     }
 
     //Check if enough data has been recorded
-    if(positionPlots.at(0)->getData().size() < 100){
+    const int indexWindow = 0.5 / averageDeltaT;  // seconds / seconds
+    if (positionPlots.at(0)->getData().size() < 2 * indexWindow) {
         LENNY_LOG_WARNING("We should record at least 100 data points before the estimation...")
         return -1.0;
     }
 
-    
+    //Collect delays for individual dofs
+    std::vector<double> delays;
+    for (int i = 0; i < positionPlots.size(); i++) {
+        double averageDofDelay = 0.0;
+        const auto& data = positionPlots.at(i)->getData();
+        for (int j = indexWindow; j < data.size() - indexWindow; j++) {
+            const double targetTime = data.at(j).first;
+            const double targetValue = data.at(j).second.at(TARGET_VALUE);
 
+            double currentTime = data.at(j).first;
+            double currentValue = data.at(j).second.at(CURRENT_VALUE);
 
+            double valueDifference = fabs(targetValue - currentValue);
+            double timeDifference = currentTime - targetTime;
+
+            const int maxIndex = std::min((int)data.size(), j + 1 + indexWindow);
+            for (int k = j + 1; k < maxIndex; k++) {  //Starting from target value, go forward and check current value
+                currentTime = data.at(k).first;
+                currentValue = data.at(k).second.at(CURRENT_VALUE);
+
+                const double diff = fabs(targetValue - currentValue);
+                if (diff < valueDifference) {
+                    valueDifference = diff;
+                    timeDifference = currentTime - targetTime;
+                }
+            }
+            averageDofDelay += timeDifference;
+        }
+        averageDofDelay /= (double)data.size();
+        delays.emplace_back(averageDofDelay);
+        LENNY_LOG_DEBUG("Average Delay for Dof %d: %lf", i, averageDofDelay)
+    }
+
+    return std::reduce(delays.begin(), delays.end()) / (double)delays.size();
 }
 
 void RobotControlInterface::drawScene(double alpha) const {
@@ -202,6 +234,11 @@ void RobotControlInterface::drawGui() {
             }
 
             if (Gui::I->TreeNode("Plots")) {
+                if (Gui::I->Button("Estimate Delay")) {
+                    const double delay = estimateDelay();
+                    LENNY_LOG_INFO("Estimate Delay: %lf [s]", delay)
+                }
+
                 if (Gui::I->Button("Clear"))
                     clearPlots();
 

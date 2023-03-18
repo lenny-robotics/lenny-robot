@@ -47,8 +47,8 @@ void ControlApp::drawGui() {
 
     robot.drawGui(true);
     robot.drawFKGui(finalRobotState, "Final Robot State");
-    rci.drawGui();
     btt.drawGui();
+    rci.drawGui();
 
     if (rci.isConnected() && !btt.isTrackingRunning()) {
         if (ImGui::TreeNode("Control")) {
