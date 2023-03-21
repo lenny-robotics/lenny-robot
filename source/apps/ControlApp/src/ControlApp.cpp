@@ -9,6 +9,7 @@ ControlApp::ControlApp() : gui::Application("ControlApp") {
     const auto [width, height] = getCurrentWindowSize();
     scenes.emplace_back(std::make_shared<gui::Scene>("Scene-1", width, height));
     scenes.back()->f_drawScene = [&]() -> void { drawScene(); };
+    scenes.back()->showOrigin = false;
 }
 
 void ControlApp::setTrajectory() {
@@ -30,10 +31,7 @@ void ControlApp::prepareToDraw() {
 void ControlApp::drawScene() const {
     robot.drawScene(initialRobotState, {});
     rci.drawScene();
-    for (uint i = 0; i < numSteps; i += 5) {
-        const double time = (double)i * getDt();
-        robot.drawVisuals(trajectory.getLinearInterpolation(time), {}, Eigen::Vector3d(0.75, 0.75, 0.75), 0.5);
-    }
+    robot.drawVisuals(finalRobotState, {}, std::nullopt, 0.5);
 }
 
 void ControlApp::drawGui() {
