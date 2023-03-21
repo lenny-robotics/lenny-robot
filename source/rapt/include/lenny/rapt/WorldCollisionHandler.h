@@ -33,6 +33,7 @@ public:
     typedef std::pair<collision::Primitive::SPtr, Eigen::Vector6d> PrimitiveInfo;  //[primitive, parentState]
     typedef std::vector<PrimitiveInfo> PrimitiveList;
     PrimitiveList primitives;
+    bool showPrimitives = true;
 
 private:
     static WorldCollisionParent::SPtr parent;

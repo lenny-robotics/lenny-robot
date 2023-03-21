@@ -9,13 +9,16 @@ namespace lenny::rapt {
 WorldCollisionParent::SPtr WorldCollisionHandler::parent = std::make_shared<WorldCollisionParent>();
 
 void WorldCollisionHandler::drawScene() const {
-    for (const auto& [primitive, parentState] : primitives)
-        primitive->drawScene(parentState, Eigen::Vector4d(0.0, 0.0, 0.75, 0.75));
+    if (showPrimitives)
+        for (const auto& [primitive, parentState] : primitives)
+            primitive->drawScene(parentState, Eigen::Vector4d(0.0, 0.0, 0.75, 0.75));
 }
 
 void WorldCollisionHandler::drawGui() {
     using tools::Gui;
     if (Gui::I->TreeNode("World Collision Handler")) {
+        Gui::I->Checkbox("Show Primitives", showPrimitives);
+
         int iter = 0;
         for (auto& [primitive, state] : primitives)
             primitive->drawGui(primitive->parent->description + " - " + std::to_string(iter++));
