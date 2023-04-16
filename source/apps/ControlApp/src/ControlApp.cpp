@@ -31,7 +31,12 @@ void ControlApp::prepareToDraw() {
 void ControlApp::drawScene() const {
     robot.drawScene(initialRobotState, {});
     rci.drawScene();
-    robot.drawVisuals(finalRobotState, {}, std::nullopt, 0.5);
+    robot.drawVisuals(finalRobotState, {}, Eigen::Vector3d(0.75, 0.75, 0.75), 0.5);
+    for (uint i = 0; i < numSteps; i += 10) {
+        const double time = (double)i * getDt();
+        robot.drawSkeleton(trajectory.getLinearInterpolation(time), robot.skeletonRadius, Eigen::Vector4d(0.75, 0.75, 0.75, 0.5),
+                           Eigen::Vector4d(0.75, 0.75, 0.75, 0.5));
+    }
 }
 
 void ControlApp::drawGui() {
@@ -45,8 +50,8 @@ void ControlApp::drawGui() {
 
     robot.drawGui(true);
     robot.drawFKGui(finalRobotState, "Final Robot State");
-    rci.drawGui();
     btt.drawGui();
+    rci.drawGui();
 
     if (rci.isConnected() && !btt.isTrackingRunning()) {
         if (ImGui::TreeNode("Control")) {

@@ -9,6 +9,8 @@ add_executable(${PROJECT_NAME} ${sources})
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC lenny::robot
+        PUBLIC lenny::control
+        PUBLIC lenny::gui
         PUBLIC GTest::gtest_main
         )
 

@@ -101,6 +101,96 @@ bool RobotControlInterface::positionReached(const Eigen::VectorXd& currentRobotP
     return true;
 }
 
+/*
+ * COMMENT: Estimates delay based on positionPlots (CURRENT_VALUE VS TARGET_VALUE)
+ */
+void RobotControlInterface::estimateDelay(std::map<std::string, double>& estimatePerDof) const {
+    //Clear input
+    estimatePerDof.clear();
+
+    //Check if data is initialized
+    if (positionPlots.size() != getStateSize() || getStateSize() <= 0) {
+        LENNY_LOG_WARNING("Plot data does not seem to be initialized. Therefore, delay estimation does not work...")
+        return;
+    }
+
+    //Check if enough data has been recorded
+    const int indexWindow = 0.5 / averageDeltaT;  // seconds / seconds
+    if (positionPlots.at(0)->getData().size() < 2 * indexWindow) {
+        LENNY_LOG_WARNING("Not enought data recorded for estimation...")
+        return;
+    }
+
+    //Collect delays for individual dofs
+    for (int i = 0; i < positionPlots.size(); i++) {
+        double averageDofDelay = 0.0;
+        double counter = 0.0;
+        const auto& data = positionPlots.at(i)->getData();
+
+        //Loop over data minus indexWindow from both sides
+        for (int j = indexWindow; j < data.size() - indexWindow; j++) {
+            const double t_t = data.at(j).first;
+            const double v_t = data.at(j).second.at(TARGET_VALUE);
+
+            //Ignore measurement if there is not enough change
+            const double deltaThreshold = 0.001;
+            if (fabs(v_t - data.at(j + 1).second.at(TARGET_VALUE)) < deltaThreshold)
+                continue;
+
+            //Collect closest points from current values
+            double t1, v1, t2, v2, min_dist = INFINITY;
+            for (int k = j; k < std::min((int)data.size(), j + indexWindow) - 1; k++) {  //Starting from target value, go forward and check current value
+                const double dist_k = std::abs(v_t - data.at(k).second.at(CURRENT_VALUE));
+                const double dist_kp1 = std::abs(v_t - data.at(k + 1).second.at(CURRENT_VALUE));
+
+                bool updateValues = false;
+                if (dist_k < min_dist) {
+                    min_dist = dist_k;
+                    updateValues = true;
+                }
+
+                if (dist_kp1 < min_dist) {
+                    min_dist = dist_kp1;
+                    updateValues = true;
+                }
+
+                if(updateValues) {
+                    t1 = data.at(k).first;
+                    v1 = data.at(k).second.at(CURRENT_VALUE);
+                    t2 = data.at(k + 1).first;
+                    v2 = data.at(k + 1).second.at(CURRENT_VALUE);
+                }
+            }
+
+            //Linearly interpolate
+            double t_c = t1;
+            if(std::abs(t2 - t1) > 1e-5 && std::abs(v2 - v1) > 1e-5){
+                const double slope = (v2 - v1) / (t2 - t1);
+                const double v_intercept = v1 - slope * t1;
+                t_c = (v_t - v_intercept) / slope;
+            }
+            const double t_diff = t_c - t_t;
+            if(t_diff < 0.0){
+                LENNY_LOG_WARNING("Delay estimate %lf is negative, which does not make sense. Ignoring this estimate...", t_diff)
+                continue;
+            }
+
+            //Update parameters
+            averageDofDelay += t_diff;
+            counter += 1.0;
+        }
+
+        //Add to map
+        if (counter > 0.0) {
+            averageDofDelay /= counter;
+            estimatePerDof.insert({positionPlots.at(i)->getTitle(), averageDofDelay});
+            LENNY_LOG_DEBUG("Average delay for Dof %d: %lf", i, averageDofDelay)
+        } else {
+            LENNY_LOG_WARNING("Not enough relevant data to estimate delay for Dof %d", i)
+        }
+    }
+}
+
 void RobotControlInterface::drawScene(double alpha) const {
     if (!isConnected())
         return;
@@ -181,6 +271,11 @@ void RobotControlInterface::drawGui() {
             }
 
             if (Gui::I->TreeNode("Plots")) {
+                if (Gui::I->Button("Estimate Delay")) {
+                    std::map<std::string, double> estimatePerDof;
+                    estimateDelay(estimatePerDof);
+                }
+
                 if (Gui::I->Button("Clear"))
                     clearPlots();
 
