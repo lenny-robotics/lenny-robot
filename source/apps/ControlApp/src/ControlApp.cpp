@@ -9,6 +9,7 @@ ControlApp::ControlApp() : gui::Application("ControlApp") {
     const auto [width, height] = getCurrentWindowSize();
     scenes.emplace_back(std::make_shared<gui::Scene>("Scene-1", width, height));
     scenes.back()->f_drawScene = [&]() -> void { drawScene(); };
+    scenes.back()->showOrigin = false;
 }
 
 void ControlApp::setTrajectory() {
