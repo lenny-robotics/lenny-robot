@@ -30,7 +30,9 @@ public:
     virtual void stop();
 
     //--- Helpers
+    void clearPlots();
     bool positionReached(const Eigen::VectorXd& currentRobotPosition, const Eigen::VectorXd& targetRobotPosition) const;
+    void estimateDelay(std::map<std::string, double>& estimatePerDof) const;  //estimates delay based on plot data
 
     //--- Drawing
     void drawScene(double alpha = 0.5) const;
@@ -64,7 +66,6 @@ protected:
 
     //--- Plot
     void initializePlots(const tools::Plot<PlotType>::F_addPlot f_addPlot);
-    void clearPlots();
     void updatePlots();
 
 public:

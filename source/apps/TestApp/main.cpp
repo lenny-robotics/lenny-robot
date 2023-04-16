@@ -1,4 +1,5 @@
 #include "Tests_Robot.h"
+#include "Tests_Control.h"
 
 int main() {
     testing::InitGoogleTest();
