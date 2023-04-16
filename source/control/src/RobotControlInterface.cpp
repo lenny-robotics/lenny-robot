@@ -122,38 +122,65 @@ void RobotControlInterface::estimateDelay(std::map<std::string, double>& estimat
     }
 
     //Collect delays for individual dofs
-    const double deltaThreshold = 0.001;  //Ignore measurement if there is not enough change
     for (int i = 0; i < positionPlots.size(); i++) {
         double averageDofDelay = 0.0;
         double counter = 0.0;
         const auto& data = positionPlots.at(i)->getData();
-        for (int j = indexWindow; j < data.size() - indexWindow; j++) {
-            const double targetTime = data.at(j).first;
-            const double targetValue = data.at(j).second.at(TARGET_VALUE);
 
-            if (fabs(targetValue - data.at(j + 1).second.at(TARGET_VALUE)) < deltaThreshold)
+        //Loop over data minus indexWindow from both sides
+        for (int j = indexWindow; j < data.size() - indexWindow; j++) {
+            const double t_t = data.at(j).first;
+            const double v_t = data.at(j).second.at(TARGET_VALUE);
+
+            //Ignore measurement if there is not enough change
+            const double deltaThreshold = 0.001;
+            if (fabs(v_t - data.at(j + 1).second.at(TARGET_VALUE)) < deltaThreshold)
                 continue;
 
-            double currentTime = data.at(j).first;
-            double currentValue = data.at(j).second.at(CURRENT_VALUE);
+            //Collect closest points from current values
+            double t1, v1, t2, v2, min_dist = INFINITY;
+            for (int k = j; k < std::min((int)data.size(), j + indexWindow) - 1; k++) {  //Starting from target value, go forward and check current value
+                const double dist_k = std::abs(v_t - data.at(k).second.at(CURRENT_VALUE));
+                const double dist_kp1 = std::abs(v_t - data.at(k + 1).second.at(CURRENT_VALUE));
 
-            double valueDifference = fabs(targetValue - currentValue);
-            double timeDifference = currentTime - targetTime;
+                bool updateValues = false;
+                if (dist_k < min_dist) {
+                    min_dist = dist_k;
+                    updateValues = true;
+                }
 
-            const int maxIndex = std::min((int)data.size(), j + 1 + indexWindow);
-            for (int k = j + 1; k < maxIndex; k++) {  //Starting from target value, go forward and check current value
-                currentTime = data.at(k).first;
-                currentValue = data.at(k).second.at(CURRENT_VALUE);
+                if (dist_kp1 < min_dist) {
+                    min_dist = dist_kp1;
+                    updateValues = true;
+                }
 
-                const double diff = fabs(targetValue - currentValue);
-                if (diff < valueDifference) {
-                    valueDifference = diff;
-                    timeDifference = currentTime - targetTime;
+                if(updateValues) {
+                    t1 = data.at(k).first;
+                    v1 = data.at(k).second.at(CURRENT_VALUE);
+                    t2 = data.at(k + 1).first;
+                    v2 = data.at(k + 1).second.at(CURRENT_VALUE);
                 }
             }
-            averageDofDelay += timeDifference;
+
+            //Linearly interpolate
+            double t_c = t1;
+            if(std::abs(t2 - t1) > 1e-5 && std::abs(v2 - v1) > 1e-5){
+                const double slope = (v2 - v1) / (t2 - t1);
+                const double v_intercept = v1 - slope * t1;
+                t_c = (v_t - v_intercept) / slope;
+            }
+            const double t_diff = t_c - t_t;
+            if(t_diff < 0.0){
+                LENNY_LOG_WARNING("Delay estimate %lf is negative, which does not make sense. Ignoring this estimate...", t_diff)
+                continue;
+            }
+
+            //Update parameters
+            averageDofDelay += t_diff;
             counter += 1.0;
         }
+
+        //Add to map
         if (counter > 0.0) {
             averageDofDelay /= counter;
             estimatePerDof.insert({positionPlots.at(i)->getTitle(), averageDofDelay});

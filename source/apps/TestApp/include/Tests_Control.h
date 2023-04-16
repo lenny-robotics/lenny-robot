@@ -1,13 +1,12 @@
 #pragma once
 
-//#include <gtest/gtest.h> //ToDo!!
+#include <gtest/gtest.h>
 #include <lenny/control/BasicTrajectoryTracker.h>
 #include <lenny/control/EmulatorControlInterface.h>
 #include <lenny/gui/Plot.h>
 #include <lenny/tools/Timer.h>
 
-//TEST(control, interface) {
-void run_control_test() {
+TEST(control, interface) {
     using namespace lenny;
 
     //Initialize components
@@ -22,7 +21,7 @@ void run_control_test() {
     rci.initializeCommunication();
 
     //Perform tests several times
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 10; i++) {
         //Clear recorded data
         rci.clearPlots();
 
@@ -45,9 +44,15 @@ void run_control_test() {
         rci.estimateDelay(estimatePerDof);
 
         //Evaluate
+        const double absTol = 0.1;
+        const double relTol = 0.2;
+        const double eps = 1e-10;
         for (const auto& [dofName, estimate] : estimatePerDof) {
-            const double absError = std::abs(rci.emulator.timeDelay - estimate);
-            LENNY_LOG_DEBUG("Absolute error for dof `%s`: %lf", dofName.c_str(), absError)
+            const double absErr = std::abs(rci.emulator.timeDelay - estimate);
+            const double relErr = std::abs((rci.emulator.timeDelay - estimate) / ((eps + rci.emulator.timeDelay + estimate) / 2.0));
+            LENNY_LOG_DEBUG("Dof `%s` -> Absolute error: %lf. Relative error: %lf", dofName.c_str(), absErr, relErr)
+            EXPECT_LT(absErr, absTol);
+            EXPECT_LT(relErr, relTol);
         }
     }
 
