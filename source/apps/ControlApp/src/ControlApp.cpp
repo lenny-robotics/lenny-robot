@@ -30,9 +30,11 @@ void ControlApp::prepareToDraw() {
 void ControlApp::drawScene() const {
     robot.drawScene(initialRobotState, {});
     rci.drawScene();
-    for (uint i = 0; i < numSteps; i += 5) {
+    robot.drawVisuals(finalRobotState, {}, Eigen::Vector3d(0.75, 0.75, 0.75), 0.5);
+    for (uint i = 0; i < numSteps; i += 10) {
         const double time = (double)i * getDt();
-        robot.drawVisuals(trajectory.getLinearInterpolation(time), {}, Eigen::Vector3d(0.75, 0.75, 0.75), 0.5);
+        robot.drawSkeleton(trajectory.getLinearInterpolation(time), robot.skeletonRadius, Eigen::Vector4d(0.75, 0.75, 0.75, 0.5),
+                           Eigen::Vector4d(0.75, 0.75, 0.75, 0.5));
     }
 }
 

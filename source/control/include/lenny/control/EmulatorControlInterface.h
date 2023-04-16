@@ -22,7 +22,7 @@ private:
 
     void drawAdditionalGuiContent() override;
 
-private:
+public:
     PhysicalRobotEmulator emulator;
 };
 

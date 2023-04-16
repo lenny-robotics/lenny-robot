@@ -9,7 +9,9 @@ add_executable(${PROJECT_NAME} ${sources})
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC lenny::robot
-        PUBLIC GTest::gtest_main
+        PUBLIC lenny::control
+        PUBLIC lenny::gui
+        #PUBLIC GTest::gtest_main #ToDo!!!
         )
 
 target_include_directories(${PROJECT_NAME}
@@ -24,5 +26,6 @@ target_compile_definitions(${PROJECT_NAME}
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
-include(GoogleTest)
-gtest_add_tests(TARGET ${PROJECT_NAME}) #Problems with making 'gtest_discover_tests(${PROJECT_NAME})' work with ctest...
+#ToDo: Bring back!!!
+#include(GoogleTest)
+#gtest_add_tests(TARGET ${PROJECT_NAME}) #Problems with making 'gtest_discover_tests(${PROJECT_NAME})' work with ctest...

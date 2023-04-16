@@ -26,8 +26,10 @@ void BasicTrajectoryTracker::stopTrajectoryExecution() {
 
 void BasicTrajectoryTracker::gotoStateInTime(const Eigen::VectorXd& state, const double& time) {
     //Check connection
-    if (!rci.isConnected())
+    if (!rci.isConnected()){
+        LENNY_LOG_WARNING("Robot control interface needs to be connected before we can send robot to a specific state")
         return;
+    }
 
     //Check inputs
     if (state.size() != rci.robot.getStateSize())
