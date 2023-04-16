@@ -15,7 +15,7 @@ RobotApp::RobotApp() : gui::Application("RobotApp") {
 }
 
 void RobotApp::drawScene() const {
-    robot.drawScene(state, {});
+    robot.drawScene(robotState, {{"Gripper", endEffectorState}});
 
     if (rayIntersection.has_value()) {
         const auto& [linkName, globalIntersectionPoint] = rayIntersection.value();
@@ -28,13 +28,14 @@ void RobotApp::drawGui() {
     ImGui::Begin("Main Menu");
 
     robot.drawGui(true);
-    robot.drawFKGui(state, "Forward Kinematics");
+    robot.drawFKGui(robotState, "Forward Kinematics");
+    ImGui::SliderDouble("EndEffector State", &endEffectorState[0], 0.0, 1.0);
 
     ImGui::End();
 }
 
 void RobotApp::mouseMoveCallback(double xPos, double yPos, Ray ray) {
-    rayIntersection = robot.getFirstLinkHitByRay(state, ray);
+    rayIntersection = robot.getFirstLinkHitByRay(robotState, ray);
 }
 
 }  // namespace lenny

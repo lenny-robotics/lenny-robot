@@ -20,7 +20,8 @@ public:
 
 public:
     TestRobot robot;
-    Eigen::VectorXd state = robot.getInitialState();
+    Eigen::VectorXd robotState = robot.getInitialState();
+    Eigen::VectorXd endEffectorState = Eigen::VectorXd::Ones(1);
     std::optional<std::pair<std::string, Eigen::Vector3d>> rayIntersection = std::nullopt;
 };
 
